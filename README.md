@@ -27,6 +27,6 @@ Any modern browser (HTML5, javascript)
 1. Clone this repository
 2. cd into the repository: `cd hamboxexpress`
 3. Start mongoDB if not done already. It should be something like `sudo service mongodb start`
-3. `npm install`
-4. `npm start`
-5. connect with your browser to the Hambox ethernet address on port 8000
+4. `npm install`
+5. `npm start`
+6. connect with your browser to the Hambox ethernet address on port 8000
