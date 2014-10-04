@@ -12,7 +12,7 @@ If you have an Amateur Radio License the wireless interface is preferably an int
 
 # What does HamboxExpress do?
 
-HamboxExpress is a client-server web based interface which purpose is to connect your private LAN to an external network based on wireless links. To that purpose a wireless interface is used. The primary destination is to connect to the amateur radio network a.k.a the Hamnet.
+HamboxExpress is a client-server web based interface which purpose is to control the Hambox.
 
 The server resides on the Hambox and is based on node.js and MongoDB to keep the parameters and configurations.
 
