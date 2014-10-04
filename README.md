@@ -8,6 +8,8 @@ This is a work in progress
 
 Any computer or embedded computer (Raspberry Pi is the common choice) with a wireless LAN interface and a wired Ethernet interface which primary purpose is to serve as interface between your private LAN and the Hamnet. See [Hamnet](http://hamnetdb.net/). Hamnet is a kind of private network reserved for licenced amateur radio (a.k.a "hams") based on guess what... wireless networks.
 
+Alternatively it can be used for any wireless "citizen wifi" type of network.d
+
 If you have an Amateur Radio License the wireless interface is preferably an interface that can access the specific Amateur Radio segments of the 2.3 or 5.7 GHz bands and work in reduced bandwidth modes a.k.a "half" and "quarter" modes. Practically these are adapters based on Atheros chipsets.
 
 # What does HamboxExpress do?
