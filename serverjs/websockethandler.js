@@ -31,8 +31,19 @@ exports.websockethandler = function(socket) {
             console.log('ifacestate:\n' + outbuff);
             socket.emit('ifacestate', outbuff);
         });
-        //socket.emit('ifacestate', [{iface: "eth0"},{iface: "wlan0"}]);
     });
+    
+    socket.on('currentconfig:wireless', function(data) {
+        var cmd = spawn("serverscripts/lanconfig.py", ["-w"]);
+        var outbuff = '';
+        cmd.stdout.on('data', function(data) {
+            outbuff += data;
+        });
+        cmd.stdout.on('end', function() {
+            console.log('currentconfig:wireless:\n' + outbuff);
+            socket.emit('currentconfig:wireless', outbuff);
+        });
+    });    
 
     socket.on('updatewirelessconfig', function(data) {
         console.log("update:" + data._id + ":" + data.name);

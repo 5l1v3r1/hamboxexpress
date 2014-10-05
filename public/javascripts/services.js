@@ -9,6 +9,17 @@ hamboxServices.factory('InetState', function(socket) {
     }
 });
 
+hamboxServices.factory('CurrentConfig', function(socket) {
+    return {
+        wireless: function() {
+            socket.emit('currentconfig:wireless', {});
+        },
+        wired: function() {
+            socket.emit('currentconfig:wired', {});
+        }   
+    };
+});
+
 hamboxServices.factory('WirelessConfig', function($resource) {
     return $resource('wirelessconfigs', {}, {
         // Use this method for getting a list of wireless configurations

@@ -24,6 +24,7 @@ The server resides on the Hambox and is based on node.js and MongoDB to keep the
 
 ###On server side:
 
+- Python: version 2.7 is assumed
 - node.js (including npm). See [node.js](http://nodejs.org/) 
 - bower: install with `sudo npm install -g bower`
 - Mongo-DB: normally you will find it in your Linux distribution. 
@@ -44,3 +45,8 @@ Any modern browser (HTML5, javascript)
 4. `npm install`
 5. `npm start`
 6. connect with your browser to the Hambox ethernet address on port 8000
+
+## Limitations
+
+- IBSS (ad-hoc) mode only
+

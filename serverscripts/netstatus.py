@@ -30,18 +30,18 @@ def get_info():
             link_none_m = link_none_re.match(ip_line)
         elif inet_m is None:
             inet_m = inet_re.match(ip_line)
-        if (hdr_m):
+        if hdr_m and not link_m:
             seqnum = int(hdr_m.group(1))
             iface = hdr_m.group(2)
             state = hdr_m.group(3)
             ipdict[iface] = [state]
-        if (link_m):
+        if link_m and not inet_m:
             ipdict[iface].append(link_m.group(1))
             ipdict[iface].append(link_m.group(2))
-        if (link_none_m):
+        if link_none_m and not inet_m:
             ipdict[iface].append("none")
             ipdict[iface].append("")
-        if (inet_m):
+        if inet_m:
             ipdict[iface].append(inet_m.group(1))
             ipdict[iface].append(int(inet_m.group(2)))
             hdr_m = None
@@ -54,12 +54,14 @@ def get_info():
     phy_re = re.compile(r"phy#(\d+)")
     iface_re = re.compile(r"\s+Interface (\S+)")
     mac_re = re.compile(r"\s+addr (\S+)")
+    ssid_re = re.compile(r"\s+ssid (\S+)")
     type_re = re.compile(r"\s+type (\S+)")
     chan_re = re.compile("\s+channel (\S+) (\S+).+width: (\d+) MHz.*")
 
     phy_m = None
     iface_m = None
     mac_m = None
+    ssid_m = None
     type_m = None
     chan_m = None
 
@@ -71,23 +73,32 @@ def get_info():
             iface_m = iface_re.match(iw_line)
         elif mac_m is None:
             mac_m = mac_re.match(iw_line)
+        elif ssid_m is None:
+            ssid_m = ssid_re.match(iw_line)
         elif type_m is None:
             type_m = type_re.match(iw_line)
         elif chan_m is None:
             chan_m = chan_re.match(iw_line)
-        if (phy_m):
+        if phy_m and not iface_m:
             phynum = int(phy_m.group(1))
-        if (iface_m):
+        if iface_m and not mac_m:
             iface = iface_m.group(1)
             iwdict[iface] = [phynum]
-        if (mac_m):
+        if mac_m and not ssid_m:
             iwdict[iface].append(mac_m.group(1))
-        if (type_m):
+        if ssid_m and not type_m:
+            pass
+        if type_m and not chan_m:
             iwdict[iface].append(type_m.group(1))
-        if (chan_m):
+        if chan_m:
             iwdict[iface].append(int(chan_m.group(1)))
             iwdict[iface].append(int(chan_m.group(2)[1:]))
             iwdict[iface].append(int(chan_m.group(3)))
+            phy_m = None
+            iface_m = None
+            mac_m = None
+            type_m = None
+            chan_m = None            
             
     return ipdict, iwdict
     
