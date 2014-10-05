@@ -33,6 +33,7 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
                 chan = iwdata[3];
                 freq = iwdata[4];
                 bw = iwdata[5];
+                txpower = iwdata[6]*100;
             }
             $scope.wirelessifaces.push({
                 iface: iwkey,
@@ -43,7 +44,8 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
                 ipmask: ipmask,
                 chan: chan,
                 freq: freq,
-                bw: bw
+                bw: bw,
+                txpower: txpower
             });
         }
         
@@ -106,7 +108,8 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
             {field:'ipaddr', displayName:'IP', enableCellEdit: false},
             {field:'ipmask', displayName:'Mask', enableCellEdit: false},
             {field:'freq', displayName:'F(MHz)', enableCellEdit: false},
-            {field:'bw', displayName:'BW(MHz)', enableCellEdit: false}
+            {field:'bw', displayName:'BW(MHz)', enableCellEdit: false},
+            {field:'txpower', displayName:'P(mBm)', enableCellEdit: false}
         ]
     };
         

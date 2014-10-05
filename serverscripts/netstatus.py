@@ -94,6 +94,7 @@ def get_info():
             iwdict[iface].append(int(chan_m.group(1)))
             iwdict[iface].append(int(chan_m.group(2)[1:]))
             iwdict[iface].append(int(chan_m.group(3)))
+            iwdict[iface].append(get_txpower(iface))
             phy_m = None
             iface_m = None
             mac_m = None
@@ -101,6 +102,21 @@ def get_info():
             chan_m = None            
             
     return ipdict, iwdict
+    
+#===================================================================================================
+def get_txpower(iface):
+    iwc_out = os.popen("iwconfig %s" % iface)
+    
+    txpower_re = re.compile(r"\s*Tx-Power=(\d+) dBm")
+    txpower_m = None
+    
+    for iwc_line_raw in iwc_out:
+        iwc_line = iwc_line_raw.strip('\r\n')
+        txpower_m = txpower_re.match(iwc_line)  
+        if txpower_m:
+            return int(txpower_m.group(1))
+            
+    return 0
     
 #===================================================================================================
 def main():
