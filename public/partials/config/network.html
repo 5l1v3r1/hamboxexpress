@@ -2,16 +2,45 @@
     <b><span class="glyphicon glyphicon-cloud"></span> Network configurations </b>
 </div>
 
-<div class="row">
-    <b>Wireless</b>:</br>
-    <div class="gridStyle" ng-grid="wirelessConfigGridOptions"></div>
-</div>
+<div class="container-fluid">
+           
+    <div class="row"><kbd>Wireless</kbd></div>
+    
+    <div class="row">&nbsp;</div>
 
-<div class="row">
-    <button ng-click="addWirelessConfigRow()"><span class="glyphicon glyphicon-plus"></span> New Config</button>
-    <button ng-click="refreshWirelessConfig()"><span class="glyphicon glyphicon-refresh"></span> Refresh from DB</button>
-</div>
+    <div class="row">
+        <strong>Current state</strong></br>
+        <div class="netIfaceGridStyle" ng-grid="wirelessIfaceStateGridOptions"></div>
+    </div>
+    
+    <div class="row">
+        <button ng-click="refreshIfaceState()"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
+    </div>
+    
+    <div class="row">&nbsp;</div>
+    
+    <div class="row">
+        <strong>Stored configurations</strong></br>
+        <div class="netConfigGridStyle" ng-grid="wirelessConfigGridOptions"></div>
+    </div>
+    
+    <div class="row">
+        <button ng-click="addWirelessConfigRow()"><span class="glyphicon glyphicon-plus"></span> New Config</button>
+        <button ng-click="refreshWirelessConfig()"><span class="glyphicon glyphicon-refresh"></span> Refresh from DB</button>
+    </div>
+    
+    <div class="row">&nbsp;</div>
 
-<div class="row">
-    <b>Wired</b>:</br>
+    <div class="row"><kbd>Wired</kbd></div>
+    
+    <div class="row">&nbsp;</div>
+    
+    <div class="row">
+        <strong>Current state</strong></br>
+        <div class="netIfaceGridStyle" ng-grid="wiredIfaceStateGridOptions"></div>
+    </div>
+    
+    <div class="row">
+        <button ng-click="refreshIfaceState()"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
+    </div>
 </div>

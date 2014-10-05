@@ -3,27 +3,39 @@ body {
 }
 
 .tab-content .lead {
-	margin-top: 20px;
+    margin-top: 20px;
 }
 
 .result-table {
-	margin: 20px 0;
-	width: 100%;
-	border-collapse: collapse;
+    margin: 20px 0;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 .result-table td {
-	padding: 8px;
+    padding: 8px;
 }
 
 .result-table > tbody > tr > td:first-child {
-	width: 25%;
-	max-width: 300px;
-	text-align: right;
+    width: 25%;
+    max-width: 300px;
+    text-align: right;
 }
 
-.gridStyle {
+.netConfigGridStyle {
     border: 1px solid rgb(212,212,212);
     width: 1200px;
-    height: 250px;
+    height: 150px;
+}
+
+.netIfaceGridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 1200px;
+    height: 80px;
+}
+
+.row-padded {
+    padding: 35px;
+    background-color: #F7F7F7;
+    border: 1px solid #DDD;
 }

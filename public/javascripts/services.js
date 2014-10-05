@@ -1,6 +1,14 @@
 // Angular service module for connecting to JSON APIs
 var hamboxServices = angular.module('hamboxServices', ['ngResource']);
 
+hamboxServices.factory('InetState', function(socket) {
+    return {
+        query: function() {
+            socket.emit('ifacestate', {});
+        }
+    }
+});
+
 hamboxServices.factory('WirelessConfig', function($resource) {
     return $resource('wirelessconfigs', {}, {
         // Use this method for getting a list of wireless configurations

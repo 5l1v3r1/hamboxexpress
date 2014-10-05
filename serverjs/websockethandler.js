@@ -20,6 +20,19 @@ exports.websockethandler = function(socket) {
           console.log('child process exited with code ' + code);
         });        
     });
+    
+    socket.on('ifacestate', function(data) {
+        var cmd = spawn("serverscripts/netstatus.py", []);
+        var outbuff = '';
+        cmd.stdout.on('data', function(data) {
+            outbuff += data;
+        });
+        cmd.stdout.on('end', function() {
+            console.log('ifacestate:\n' + outbuff);
+            socket.emit('ifacestate', outbuff);
+        });
+        //socket.emit('ifacestate', [{iface: "eth0"},{iface: "wlan0"}]);
+    });
 
     socket.on('updatewirelessconfig', function(data) {
         console.log("update:" + data._id + ":" + data.name);
