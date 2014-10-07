@@ -48,5 +48,6 @@ Any modern browser (HTML5, javascript)
 
 ## Limitations
 
-- IBSS (ad-hoc) mode only
+- For now only IBSS (ad-hoc) mode for wireless is supported 
+- Does not work with reverse proxies
 

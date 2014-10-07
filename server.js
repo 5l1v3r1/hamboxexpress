@@ -11,6 +11,7 @@ var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 
+app.enable('trust proxy');
 app.set('port', process.env.VCAP_APP_PORT || 8000);
 app.set('views', path.join(__dirname, 'views'));
 app.engine('html', require('ejs').renderFile);
