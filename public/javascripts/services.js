@@ -28,7 +28,14 @@ hamboxServices.factory('WirelessConfig', function($resource) {
 });
 
 hamboxServices.factory('socket', function($rootScope) {
-    var socket = io.connect();
+    var initialPage = window.location.pathname;
+    var socketPath = '';
+
+    if (initialPage != '/') {
+        socketPath = initialPage;
+    }
+
+    var socket = io.connect('/', {resource: socketPath+'socket.io'}); //TODO: context sensitiveness for the hambox shit
   
     return {
         on: function (eventName, callback) {

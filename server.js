@@ -16,12 +16,13 @@ app.set('port', process.env.VCAP_APP_PORT || 8000);
 app.set('views', path.join(__dirname, 'views'));
 app.engine('html', require('ejs').renderFile);
 //app.set('view engine', 'jade');
-app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon('public/favicon.ico'));
 
 // Handle Errors gracefully
 app.use(function(err, req, res, next) {

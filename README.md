@@ -49,5 +49,23 @@ Any modern browser (HTML5, javascript)
 ## Limitations
 
 - For now only IBSS (ad-hoc) mode for wireless is supported 
-- Does not work with reverse proxies
 
+## Run behind a reverse proxy
+
+Assume we want to expose the Hambox at the relative path /hambox/ from a server on the same network. Hambox address is `192.168.0.51` in this network. It should still be accessible directly at `http://192.168.0.51:8000/`. We will be using [nginx](http://nginx.org/en/) for the reverse proxy server. This is how the location section of the site configuration file should look like:
+
+<pre><code>location /hambox/ {
+        proxy\_set\_header X-Forwarded-Host $host;
+        proxy\_set\_header X-Forwarded-Server $host;
+        proxy\_set\_header X-Forwarded-For $proxy\_add\_x\_forwarded_for;
+        proxy\_set\_header Upgrade $http\_upgrade;
+        proxy\_set\_header Connection "Upgrade";
+        proxy\_pass http://192.168.0.51:8000/;
+}
+</pre></code>
+
+This is pretty hard to put in place. This is how I made it work:
+
+- in `views/index.html` all static paths are relative (i.e. not starting at root /)
+- in `server.js` you have to add `app.enable('trust proxy');`
+- in `public/javascripts/services.js` in the socket service you have to specify the path of the `socket.io` file seen from the client. See the code at the beginning of the service. This is designed to make the web sockets work in reverse proxy and direct mode.
