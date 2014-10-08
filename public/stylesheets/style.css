@@ -22,15 +22,27 @@ body {
     text-align: right;
 }
 
-.netConfigGridStyle {
+.netStoredConfigGridStyle {
     border: 1px solid rgb(212,212,212);
-    width: 1200px;
+    width: 1120px;
     height: 150px;
 }
 
-.netIfaceGridStyle {
+.netCurrentConfigGridStyle {
     border: 1px solid rgb(212,212,212);
-    width: 1200px;
+    width: 980px;
+    height: 150px;
+}
+
+.netWirelessIfaceGridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 700px;
+    height: 80px;
+}
+
+.netWiredIfaceGridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 480px;
     height: 80px;
 }
 

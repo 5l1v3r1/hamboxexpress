@@ -100,16 +100,16 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         enableColumnResize: true,
         showFilter: true,
         columnDefs: [
-            { field:'active', displayName: 'Active', enableCellEdit: false, 
+            { field:'active', displayName: 'Active', enableCellEdit: false, width: 60,
                 cellTemplate: '<input type="checkbox" disabled ng-model="row.entity.active">'
             },
-            {field:'iface', displayName:'Iface', enableCellEdit: false},
-            {field:'macaddr', displayName:'MAC', enableCellEdit: false},
-            {field:'ipaddr', displayName:'IP', enableCellEdit: false},
-            {field:'ipmask', displayName:'Mask', enableCellEdit: false},
-            {field:'freq', displayName:'F(MHz)', enableCellEdit: false},
-            {field:'bw', displayName:'BW(MHz)', enableCellEdit: false},
-            {field:'txpower', displayName:'P(mBm)', enableCellEdit: false}
+            {field:'iface', displayName:'Iface', enableCellEdit: false, width: 60},
+            {field:'macaddr', displayName:'MAC', enableCellEdit: false, width: 140},
+            {field:'ipaddr', displayName:'IP', enableCellEdit: false, width: 120},
+            {field:'ipmask', displayName:'Mask', enableCellEdit: false, width: 60},
+            {field:'freq', displayName:'F(MHz)', enableCellEdit: false, width: 80},
+            {field:'bw', displayName:'BW(MHz)', enableCellEdit: false, width: 80},
+            {field:'txpower', displayName:'P(mBm)', enableCellEdit: false, width: 80}
         ]
     };
         
@@ -120,13 +120,13 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         enableColumnResize: true,
         showFilter: true,
         columnDefs: [
-            { field:'active', displayName: 'Active', enableCellEdit: false, 
+            { field:'active', displayName: 'Active', enableCellEdit: false, width: 60,
                 cellTemplate: '<input type="checkbox" disabled ng-model="row.entity.active">'
             },
-            {field:'iface', displayName:'Iface', enableCellEdit: false},
-            {field:'macaddr', displayName:'MAC', enableCellEdit: false},
-            {field:'ipaddr', displayName:'IP', enableCellEdit: false},
-            {field:'ipmask', displayName:'Mask', enableCellEdit: false}
+            {field:'iface', displayName:'Iface', enableCellEdit: false, width: 60},
+            {field:'macaddr', displayName:'MAC', enableCellEdit: false, width: 140},
+            {field:'ipaddr', displayName:'IP', enableCellEdit: false, width: 120},
+            {field:'ipmask', displayName:'Mask', enableCellEdit: false, width: 60}
         ]
     };
     
@@ -137,23 +137,23 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         enableColumnResize: true,
         showFilter: true,
         columnDefs: [
-            {field:'iface', displayName:'Iface', enableCellEdit: false},
-            {field:'ipaddr', displayName:'IP', enableCellEdit: false},
-            {field:'ipmask', displayName:'Mask', enableCellEdit: false},
-            {field:'essid', displayName:'ESSID', enableCellEdit: false},
-            {field:'bssid', displayName:'BSSID', enableCellEdit: false},
-            {field:'freq', displayName:'F(MHz)', enableCellEdit: false},
-            {field:'bw', displayName:'BW(MHz)', enableCellEdit: false},
-            {field:'mbm', displayName:'P(mBm)', enableCellEdit: false},
-            { field:'', displayName: 'Store', enableCellEdit: false, 
+            {field:'iface', displayName:'Iface', enableCellEdit: false, width: 60},
+            {field:'ipaddr', displayName:'IP', enableCellEdit: false, width: 120},
+            {field:'ipmask', displayName:'Mask', enableCellEdit: false, width: 60},
+            {field:'essid', displayName:'ESSID', enableCellEdit: false, width: 160},
+            {field:'bssid', displayName:'BSSID', enableCellEdit: false, width: 140},
+            {field:'freq', displayName:'F(MHz)', enableCellEdit: false, width: 80},
+            {field:'bw', displayName:'BW(MHz)', enableCellEdit: false, width: 80},
+            {field:'mbm', displayName:'P(mBm)', enableCellEdit: false, width: 80},
+            { field:'', displayName: 'Store', enableCellEdit: false, width: 60,
                 cellTemplate: '<button id="cfgStoreBtn" type="button"  ng-click="newWirelessConfigRowFromCurrent(\
-                    row.entity)" ><span class="glyphicon glyphicon-pencil"></span></button>'
+                    row.entity)" ><span class="glyphicon glyphicon-download"></span></button>'
             },            
-            { field:'', displayName: 'Run', enableCellEdit: false, 
+            { field:'', displayName: 'Run', enableCellEdit: false, width: 60,
                 cellTemplate: '<button id="cfgRunBtn" type="button"  ng-click="runCurrentWirelessConfig(\
                     row.entity)" ><span class="glyphicon glyphicon-play"></span></button>'
             },            
-            { field:'', displayName: 'Delete', enableCellEdit: false, 
+            { field:'', displayName: 'Delete', enableCellEdit: false, width: 60,
                 cellTemplate: '<button id="cfgDelBtn" type="button"  ng-click="delCurrentWirelessConfig(\
                     row.entity)" ><span class="glyphicon glyphicon-remove"></span></button>'
             }            
@@ -192,26 +192,26 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         enableColumnResize: true,
         showFilter: true,
         columnDefs: [
-            {field:'name', displayName: 'Name', enableCellEdit: true},
-            {field:'iface', displayName:'Iface', enableCellEdit: true}, 
-            {field:'iploc', displayName:'HamLocal IP', enableCellEdit: true}, 
-            {field:'iplocmask', displayName:'LocM', enableCellEdit: true},
-            {field:'ipnet', displayName:'HamNet IP', enableCellEdit: true},
-            {field:'ipnetmask', displayName:'NetM', enableCellEdit: true},
-            {field:'essid', displayName:'ESSID', enableCellEdit: true},
-            {field:'bssid', displayName:'BSSID', enableCellEdit: true},
-            {field:'freq', displayName:'Freq', enableCellEdit: true},
-            {field:'bw', displayName:'BW', enableCellEdit: true},
-            {field:'txpower', displayName:'mBm', enableCellEdit: true},
-            { field:'', displayName: 'Save', enableCellEdit: false, 
+            {field:'name', displayName: 'Name', enableCellEdit: true, width: 140},
+            {field:'iface', displayName:'Iface', enableCellEdit: true, width: 60},
+            {field:'iploc', displayName:'IP', enableCellEdit: true, width: 120},
+            {field:'iplocmask', displayName:'Mask', enableCellEdit: true, width: 60},
+            //{field:'ipnet', displayName:'HamNet IP', enableCellEdit: true},
+            //{field:'ipnetmask', displayName:'NetM', enableCellEdit: true},
+            {field:'essid', displayName:'ESSID', enableCellEdit: true, width: 160},
+            {field:'bssid', displayName:'BSSID', enableCellEdit: true, width: 140},
+            {field:'freq', displayName:'F(MHz)', enableCellEdit: true, width: 80},
+            {field:'bw', displayName:'BW(MHz)', enableCellEdit: true, width: 80},
+            {field:'txpower', displayName:'P(mBm)', enableCellEdit: true, width: 80},
+            { field:'', displayName: 'Save', enableCellEdit: false, width: 60,
                 cellTemplate: '<button id="wcEditBtn" type="button"  ng-click="saveWirelessConfigItem(\
                     row)" ><span class="glyphicon glyphicon-save"></span></button>'
             },
-            { field:'', displayName: 'Use', enableCellEdit: false, 
+            { field:'', displayName: 'Use', enableCellEdit: false, width: 60,
                 cellTemplate: '<button id="wcRunBtn" type="button"  ng-click="useWirelessConfigItem(\
-                    row)" ><span class="glyphicon glyphicon-ok"></span></button>'
+                    row)" ><span class="glyphicon glyphicon-upload"></span></button>'
             },
-            { field:'', displayName: 'Delete', enableCellEdit: false, 
+            { field:'', displayName: 'Delete', enableCellEdit: false, width: 60,
                 cellTemplate: '<button id="wcDelBtn" type="button"  ng-click="delWirelessConfigItem(\
                     row)" ><span class="glyphicon glyphicon-remove"></span></button>'
             }
