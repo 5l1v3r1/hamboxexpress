@@ -1,7 +1,7 @@
 HamboxExpress
 =============
 
-Hamnet connection box control web interface constructed around Express, AngularJS, Bootstrap and Highcharts
+Hamnet connection box control web interface constructed around Express, AngularJS, Bootstrap and Highcharts. Go language is used on server side for scripts interacting with the system.
 This is a work in progress
 
 # What is a Hambox?
@@ -24,7 +24,16 @@ The server resides on the Hambox and is based on node.js and MongoDB to keep the
 
 ###On server side:
 
-- Python: version 2.7 is assumed
+- [Go language](https://golang.org). 
+  - See [A tour of Go](https://tour.golang.org/#1) for a good tutoral.
+  - See [Download instructions](https://golang.org/doc/install) for download and install. Major distributions have binary packages. 
+  - For Raspberry Pi you have to build from source following [these intstructions](http://dave.cheney.net/2012/09/25/installing-go-on-the-raspberry-pi)
+  - For now you have to build scripts manually assuming `go` binary is in your PATH. From `hamboxexpress` directory:
+      1. `cd serverscripts/go`
+      2. `export GOPATH=$(pwd)`
+      3. `export GOBIN=$GOPATH/bin`
+      4. `go install src/main/netstatus.go`
+      5. `go install src/main/lanconfig.go`
 - node.js (including npm). See [node.js](http://nodejs.org/) 
 - bower: install with `sudo npm install -g bower`
 - Mongo-DB: normally you will find it in your Linux distribution. 
