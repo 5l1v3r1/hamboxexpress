@@ -31,7 +31,7 @@ body {
 .netCurrentConfigGridStyle {
     border: 1px solid rgb(212,212,212);
     width: 980px;
-    height: 150px;
+    height: 80px;
 }
 
 .netWirelessIfaceGridStyle {
