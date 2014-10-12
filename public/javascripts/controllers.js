@@ -2,6 +2,80 @@ var hamboxControllers = angular.module('hamboxControllers', []);
 
 // Controller for the network status
 function NetStatusCtrl($scope, socket) {
+    $scope.neighborsPower = {now: [-41, -75], avg: [-40, -76]}
+    $scope.neighborsList = {id: ['10.0.0.3', 'c0:4a:00:11:ef:0d']}
+    
+    $scope.neighborsListConfig = {  
+        options: {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'Received power'
+            },
+            subtitle: {
+                text: 'dBm'
+            },
+            xAxis: {
+                categories: $scope.neighborsList.id,
+                title: {
+                    text: null
+                }                    
+            },
+            yAxis: {
+                min: -100,
+                max: -20,
+                title: {
+                    text: 'dBm',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            tooltip: {
+                valueSuffix: ' dBm'
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true
+                    }
+                },
+                series: {threshold: -100}
+            },  
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -40,
+                y: 100,
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                shadow: true
+            },
+            credits: {
+                enabled: false
+            }
+        },                  
+        series: [{
+            name: 'Avg',
+            data: $scope.neighborsPower.avg,
+            dataLabels: {color: 'red'},
+            color: 'red'
+        }, {
+            name: 'Now',
+            data: $scope.neighborsPower.now,
+            dataLabels: {color: 'grey'},
+            color: 'grey'
+        }]                                                           
+    }
+    
+    setInterval(function () {
+        var neighchart = $('#neighlist').highcharts();
+        neighchart.xAxis[0].setCategories(['10.0.0.5', '10.0.0.2']);
+    }, 3000);
 }
 
 // Controller for the network configs grid

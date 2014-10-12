@@ -1,5 +1,5 @@
 // Angular module, defining routes for the app
-var hamboxApp = angular.module('hamboxapp', ['ngRoute', 'ngGrid', 'hamboxControllers', 'hamboxServices']);
+var hamboxApp = angular.module('hamboxapp', ['ngRoute', 'ngGrid', 'highcharts-ng', 'hamboxControllers', 'hamboxServices']);
 
 hamboxApp.config(['$routeProvider', 
     function($routeProvider) {

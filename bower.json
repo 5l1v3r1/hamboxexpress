@@ -15,6 +15,7 @@
     "bootstrap": "~3.1.1",
     "ng-grid": ">=2.0",
     "angular-resource": ">=1.2",
+    "highcharts-ng": "*",
     "highcharts-release": "*"
   }
 }
