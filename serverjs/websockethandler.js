@@ -22,7 +22,8 @@ exports.websockethandler = function(socket) {
     });
     
     socket.on('ifacestate', function(data) {
-        var cmd = spawn("serverscripts/netstatus.py", []);
+        //var cmd = spawn("serverscripts/netstatus.py", []);
+        var cmd = spawn("serverscripts/go/bin/netstatus", []);
         var outbuff = '';
         cmd.stdout.on('data', function(data) {
             outbuff += data;
@@ -34,7 +35,8 @@ exports.websockethandler = function(socket) {
     });
     
     socket.on('currentconfig:wireless', function(data) {
-        var cmd = spawn("serverscripts/lanconfig.py", ["-w"]);
+        //var cmd = spawn("serverscripts/lanconfig.py", ["-w"]);
+        var cmd = spawn("serverscripts/go/bin/lanconfig", ["-wireless"]);
         var outbuff = '';
         cmd.stdout.on('data', function(data) {
             outbuff += data;

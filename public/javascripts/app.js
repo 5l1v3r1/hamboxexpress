@@ -8,6 +8,10 @@ hamboxApp.config(['$routeProvider',
                 templateUrl: 'partials/config/network.html', 
                 controller: 'NetConfigsCtrl'
             }).
+            when('/status/network', { 
+                templateUrl: 'partials/status/network.html', 
+                controller: 'NetStatusCtrl'
+            }).
             // If invalid route, just redirect to the main list view
             otherwise({ 
                 redirectTo: '/config/network' 

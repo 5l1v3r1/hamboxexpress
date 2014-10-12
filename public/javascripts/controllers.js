@@ -1,5 +1,9 @@
 var hamboxControllers = angular.module('hamboxControllers', []);
 
+// Controller for the network status
+function NetStatusCtrl($scope, socket) {
+}
+
 // Controller for the network configs grid
 function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket) {
 
@@ -20,20 +24,21 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
             var iwdata = data_iw[iwkey];
             var macaddr = iwdata[1];
             var type = iwdata[2];
-            var active = (ipdata[0] == "UP");
+            var active = (ipdata[1] == "UP");
             var ipaddr = "";
             var ipmask = 0;
             var chan = 0;
             var freq = 0;
             var bw = 0;
+            var txpower = 0;
             if (active)
             {
-                ipaddr = ipdata[3];
-                ipmask = ipdata[4];
-                chan = iwdata[3];
-                freq = iwdata[4];
-                bw = iwdata[5];
-                txpower = iwdata[6]*100;
+                ipaddr = ipdata[4];
+                ipmask = ipdata[5];
+                chan = iwdata[4];
+                freq = iwdata[5];
+                bw = iwdata[6];
+                txpower = iwdata[7];
             }
             $scope.wirelessifaces.push({
                 iface: iwkey,
@@ -51,19 +56,19 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         
         for (var ipkey in data_ip)
         {
-            if (data_ip[ipkey][1] == "ether")
+            if (data_ip[ipkey][2] == "ether")
             {
                 if (!(ipkey in data_iw))
                 {
                     var ipdata = data_ip[ipkey];
-                    var active = (ipdata[0] == "UP");
-                    var macaddr = ipdata[2];
+                    var active = (ipdata[1] == "UP");
+                    var macaddr = ipdata[3];
                     var ipaddr = "";
                     var ipmask = 0;
                     if (active)
                     {
-                        ipaddr = ipdata[3];
-                        ipmask = ipdata[4];
+                        ipaddr = ipdata[4];
+                        ipmask = ipdata[5];
                     }
                     $scope.wiredifaces.push({
                         iface: ipkey,

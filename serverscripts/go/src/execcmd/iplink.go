@@ -126,3 +126,65 @@ func IpEthList() []string {
     
     return iplist
 }
+
+
+//==================================================================================================
+func IpNeighborsList(iface string) map[string][2]interface{} {
+    
+    //192.168.0.21 lladdr 74:44:01:88:01:4b STALE      <= ip, mac (key), status
+    //192.168.0.23  FAILED                             <= no mac -> skipped
+    //192.168.0.254 lladdr 00:24:d4:b0:bb:fa STALE
+    //192.168.0.8 lladdr 2c:b0:5d:be:f6:10 STALE
+    //192.168.0.22 lladdr 10:fe:ed:40:75:b8 STALE
+    //1.1.1.1 lladdr 10:fe:ed:40:75:b8 STALE
+    //192.168.0.3 lladdr 10:fe:ed:40:75:b8 STALE       
+    //192.168.0.11 lladdr 2e:60:57:97:49:01 REACHABLE  
+    
+    // possible states:
+    
+    // none -- the state of the neighbour is void. <- grey
+    // incomplete -- the neighbour is in the process of resolution. <- yellow
+    // reachable -- the neighbour is valid and apparently reachable. <- green
+    // stale -- the neighbour is valid, but is probably already unreachable, so the kernel will try to check it at the first transmission. <- yellow
+    // delay -- a packet has been sent to the stale neighbour and the kernel is waiting for confirmation. <- yellow
+    // probe -- the delay timer expired but no confirmation was received. The kernel has started to probe the neighbour with ARP/NDISC messages. <- yellow
+    // failed -- resolution has failed. <- red
+    // noarp -- the neighbour is valid. No attempts to check the entry will be made. <- blue
+    // permanent -- it is a noarp entry, but only the administrator may remove the entry from the neighbour table. <- light blue
+    
+    ok, outstr := ExecWithArgs("ip", []string{"neigh", "show", "dev", iface})
+    
+    if !ok {
+        os.Exit(2)
+    }
+    
+    line_re := regexp.MustCompile("(\\S+) lladdr (\\S+) (\\S+)")
+    var line_m []string = nil
+    var first bool = true
+    
+    neighdict := make(map[string][2]interface{})
+    var neigharray [2]interface{}
+    var macaddr string
+    neigharray[0] = ""
+    neigharray[1] = ""
+
+    for _, line := range strings.Split(outstr, "\n"){
+        
+        line_m = line_re.FindStringSubmatch(line)
+        
+        if line_m != nil {
+            if (!first) {
+                neighdict[macaddr] = neigharray
+            }
+            neigharray[0] = line_m[1]
+            macaddr = line_m[2]
+            neigharray[1] = line_m[3]
+            first = false
+            line_m = nil // consume
+        }
+    }    
+    
+    neighdict[macaddr] = neigharray // last one
+    
+    return neighdict
+}

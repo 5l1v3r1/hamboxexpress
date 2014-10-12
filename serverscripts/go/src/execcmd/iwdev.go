@@ -69,6 +69,7 @@ func IwDevAllDetails() map[string]interface{} {
             }
             StrToInt(phy_m[1], &aint)
             iwarray[0] = aint
+            first = false
             phy_m = nil // consume
         }
         if iface_m != nil {
@@ -167,4 +168,134 @@ func getTxPower(iface string) int {
     } 
     
     return txpower          
+}
+
+
+//==================================================================================================
+func IwDevStaDump(iface string) map[string][7]interface{} {
+
+    //Station c0:4a:00:11:ef:0d (on wlan0) <= macaddr (key)
+    //       inactive time:  850 ms
+    //       rx bytes:       35837612
+    //       rx packets:     354027
+    //       tx bytes:       403360
+    //       tx packets:     5655          <= txpackets
+    //       tx retries:     0             <= txretries
+    //       tx failed:      0             <= txfailed
+    //       signal:         -41 dBm       <= signal
+    //       signal avg:     -40 dBm       <= signalavg
+    //       tx bitrate:     6.0 MBit/s    <= bitratetx
+    //       rx bitrate:     0.3 MBit/s    <= bitraterx
+    //       authorized:     yes
+    //       authenticated:  yes
+    //       preamble:       long
+    //       WMM/WME:        no
+    //       MFP:            no
+    //       TDLS peer:      no
+
+    ok, outstr := ExecWithArgs("iw", []string{"dev", iface, "station", "dump"})
+    
+    if !ok {
+        os.Exit(2)
+    }
+        
+    macaddr_re   := regexp.MustCompile("Station (\\S+) \\S+")
+    txpackets_re := regexp.MustCompile("\\s+tx packets:\\s+(\\S+)")
+    txretries_re := regexp.MustCompile("\\s+tx retries:\\s+(\\S+)")
+    txfailed_re  := regexp.MustCompile("\\s+tx failed:\\s+(\\S+)")
+    signal_re    := regexp.MustCompile("\\s+signal:\\s+(\\S+) dBm")
+    signalavg_re := regexp.MustCompile("\\s+signal avg:\\s+(\\S+) dBm")
+    bitratetx_re := regexp.MustCompile("\\s+tx bitrate:\\s+(\\S+) MBit/s")
+    bitraterx_re := regexp.MustCompile("\\s+rx bitrate:\\s+(\\S+) MBit/s")
+    
+    var macaddr_m []string = nil
+    var txpackets_m []string = nil
+    var txretries_m []string = nil
+    var txfailed_m []string = nil
+    var signal_m []string = nil
+    var signalavg_m []string = nil
+    var bitratetx_m []string = nil
+    var bitraterx_m []string = nil
+    
+    var aint int
+    var afloat float32
+    var macaddr string
+    var first bool = true
+    
+    stadict := make(map[string][7]interface{})
+    var staarray [7]interface{}
+    staarray[0] = 0
+    staarray[1] = 0
+    staarray[2] = 0
+    staarray[3] = 0
+    staarray[4] = 0
+    staarray[5] = 0.0
+    staarray[6] = 0.0
+
+    for _, line := range strings.Split(outstr, "\n"){
+        
+        macaddr_m = macaddr_re.FindStringSubmatch(line)
+        txpackets_m = txpackets_re.FindStringSubmatch(line)
+        txretries_m = txretries_re.FindStringSubmatch(line)
+        txfailed_m = txfailed_re.FindStringSubmatch(line)
+        signal_m = signal_re.FindStringSubmatch(line)
+        signalavg_m = signalavg_re.FindStringSubmatch(line)
+        bitratetx_m = bitratetx_re.FindStringSubmatch(line)
+        bitraterx_m = bitraterx_re.FindStringSubmatch(line)
+        
+        if macaddr_m != nil {
+            if !first {
+                stadict[macaddr] = staarray
+                staarray[0] = 0
+                staarray[1] = 0
+                staarray[2] = 0
+                staarray[3] = 0
+                staarray[4] = 0
+                staarray[5] = 0.0
+                staarray[6] = 0.0
+            }
+            macaddr = macaddr_m[1]
+            first = false
+            macaddr_m = nil // consume
+        }
+        if txpackets_m != nil {
+            StrToInt(txpackets_m[1], &aint)
+            staarray[0] = aint
+            txpackets_m = nil // consume
+        }
+        if txretries_m != nil {
+            StrToInt(txretries_m[1], &aint)
+            staarray[1] = aint
+            txretries_m = nil // consume
+        }
+        if txfailed_m != nil {
+            StrToInt(txfailed_m[1], &aint)
+            staarray[2] = aint
+            txfailed_m = nil // consume
+        }
+        if signal_m != nil {
+            StrToInt(signal_m[1], &aint)
+            staarray[3] = aint
+            signal_m = nil // consume
+        }
+        if signalavg_m != nil {
+            StrToInt(signalavg_m[1], &aint)
+            staarray[4] = aint
+            signalavg_m = nil // consume
+        }
+        if bitratetx_m != nil {
+            StrToFloat32(bitratetx_m[1], &afloat)
+            staarray[5] = afloat
+            bitratetx_m = nil // consume
+        }
+        if bitraterx_m != nil {
+            StrToFloat32(bitraterx_m[1], &afloat)
+            staarray[6] = afloat
+            bitraterx_m = nil // consume
+        }
+    } 
+    
+    stadict[macaddr] = staarray // last one
+    
+    return stadict          
 }
