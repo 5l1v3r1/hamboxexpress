@@ -4,11 +4,11 @@ var hamboxControllers = angular.module('hamboxControllers', ['ui.bootstrap']);
 function NetStatusCtrl($scope, $interval, socket) {
 
     $scope.init = function() {
-        $scope.neigborStatusRefreshRateSubmit();        
+        $scope.refreshRateSubmit();        
     }
     
     $scope.watchedInterface = "wlan0"
-    $scope.watchedMacAddress = "00:00:00:00:00:00"
+    $scope.watchedMacAddress = "00:00:00:00:00:00";
     var neighborsRefreshInterval = 2000;
     var promise = undefined;
         
@@ -22,7 +22,7 @@ function NetStatusCtrl($scope, $interval, socket) {
     
     $scope.selectedRate = $scope.refreshRates[2];
     
-    $scope.neigborStatusRefreshRateSubmit = function() {
+    $scope.refreshRateSubmit = function() {
         neighborsRefreshInterval = $scope.selectedRate.value;
         if (promise != undefined) {
             $interval.cancel(promise);
@@ -30,7 +30,7 @@ function NetStatusCtrl($scope, $interval, socket) {
         promise = $interval(getStationsDump, neighborsRefreshInterval);
     }
     
-    $scope.neigborStatusSetRate = function(rate) {
+    $scope.setRefreshRate = function(rate) {
         $scope.selectedRate = rate;
         $scope.neigborStatusRefreshRateSubmit();
     }
@@ -70,6 +70,14 @@ function NetStatusCtrl($scope, $interval, socket) {
                 bar: {
                     dataLabels: {
                         enabled: true
+                    },
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function() {
+                                $scope.setWatchedMacAddress(this.category);
+                            }
+                        }
                     }
                 },
                 series: {threshold: -100}
@@ -100,6 +108,10 @@ function NetStatusCtrl($scope, $interval, socket) {
             dataLabels: {color: 'grey'},
             color: 'grey'
         }]                                                           
+    }
+    
+    $scope.setWatchedMacAddress = function(category) {
+        $scope.watchedMacAddress = category.split("<")[0];
     }
     
     socket.on('stationsdump:reply', function(jsondata) {
