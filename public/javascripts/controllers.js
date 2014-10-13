@@ -1,16 +1,18 @@
 var hamboxControllers = angular.module('hamboxControllers', ['ui.bootstrap']);
 
+//==================================================================================================
 // Controller for the network status
-function NetStatusCtrl($scope, $interval, socket) {
+//==================================================================================================
+
+function NetStatusCtrl($scope, $rootScope, $interval, socket) {
 
     $scope.init = function() {
         $scope.refreshRateSubmit();        
     }
     
-    $scope.watchedInterface = "wlan0"
-    $scope.watchedMacAddress = "00:00:00:00:00:00";
-    var neighborsRefreshInterval = 2000;
-    var promise = undefined;
+    $rootScope.watchedInterface = "wlan0"
+    $rootScope.watchedMacAddress = "00:00:00:00:00:00";
+    var refreshPromise = undefined;
         
     $scope.refreshRates = [
         {id: '0', name: '0.5s', value: 500},
@@ -23,16 +25,16 @@ function NetStatusCtrl($scope, $interval, socket) {
     $scope.selectedRate = $scope.refreshRates[2];
     
     $scope.refreshRateSubmit = function() {
-        neighborsRefreshInterval = $scope.selectedRate.value;
-        if (promise != undefined) {
-            $interval.cancel(promise);
+        var refreshInterval = $scope.selectedRate.value;
+        if (refreshPromise != undefined) {
+            $interval.cancel(refreshPromise);
         }
-        promise = $interval(getStationsDump, neighborsRefreshInterval);
+        refreshPromise = $interval(getStationsDump, refreshInterval);
     }
     
     $scope.setRefreshRate = function(rate) {
         $scope.selectedRate = rate;
-        $scope.neigborStatusRefreshRateSubmit();
+        $scope.refreshRateSubmit();
     }
     
     $scope.neighborsListConfig = {  
@@ -101,7 +103,7 @@ function NetStatusCtrl($scope, $interval, socket) {
             name: 'Avg',
             data: [-60],
             dataLabels: {color: 'red'},
-            color: 'red'
+            color: '#FF6666'
         }, {
             name: 'Now',
             data: [-60],
@@ -111,12 +113,112 @@ function NetStatusCtrl($scope, $interval, socket) {
     }
     
     $scope.setWatchedMacAddress = function(category) {
-        $scope.watchedMacAddress = category.split("<")[0];
+        console.log(category);
+        $rootScope.watchedMacAddress = category.split("<")[0];
+    }
+    
+    $scope.neighborWatchConfig = {
+        options: {
+            chart: {
+                type: 'gauge',
+                plotBorderWidth: 1,
+                plotBackgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                    stops: [
+                        [0, '#FFF4C6'],
+                        [0.3, '#FFFFFF'],
+                        [1, '#FFF4C6']
+                    ]
+                },
+                plotBackgroundImage: null,
+                height: 300
+            },            
+            title: {
+                text: '00:00:00:00:00:00<br>0.0.0.0'
+            },
+            pane: [{
+                startAngle: -70,
+                endAngle: 70,
+                background: null,
+                center: ['50%', '105%'],
+                size: 360
+            }],    
+            yAxis: [{
+                min: -100,
+                max: -20,
+                tickInterval: 10,
+                minorTickInterval: 1,
+                minorTickLength: 5,
+                minorTickPosition: 'outside',
+                tickPosition: 'outside',
+                labels: {
+                    rotation: 'auto',
+                    distance: 20,
+                    step: 1
+                },
+                plotBands: [{
+                    from: -100,
+                    to: -90,
+                    color: '#FF8080',
+                    innerRadius: '100%',
+                    outerRadius: '97%'
+                },
+                {
+                    from: -90,
+                    to: -60,
+                    color: '#FFC266',
+                    innerRadius: '100%',
+                    outerRadius: '97%'
+                },
+                {
+                    from: -60,
+                    to: -20,
+                    color: '#80FF80',
+                    innerRadius: '100%',
+                    outerRadius: '97%'
+                }   
+                          ],
+                pane: 0,
+                title: {
+                    text: 'dBm',
+                    y: -40
+                }
+            }],
+            plotOptions: {
+                gauge: {
+                    dataLabels: {
+                        enabled: true,
+                        format: "{y: .0f}",
+                        y: -32
+                    },
+                    dial: {
+                        radius: '100%',
+                        rearLength: "-35%"
+                    }
+                }
+            },
+            credits : {
+                enabled: false
+            }
+        },
+        series: [{
+            data: [-60],
+            yAxis: 0,
+            dataLabels: {x: -15}
+        }, {
+            data: [-60],
+            yAxis: 0,
+            dataLabels: {x: 15, color: 'red'},
+            dial: {
+                backgroundColor: 'red'
+            }            
+        }]             
     }
     
     socket.on('stationsdump:reply', function(jsondata) {
-        if (promise != undefined) {
+        if (refreshPromise != undefined) {
             var neighborschart = $('#neighlist').highcharts();
+            var neighborgaugechart = $('#neighwatch').highcharts();
             var categories = [];
             var powernow = [];
             var poweravg = [];
@@ -127,6 +229,12 @@ function NetStatusCtrl($scope, $interval, socket) {
                 categories.push(macaddrkey + '<br>' + stationdata[macaddrkey][7]);
                 powernow.push(stationdata[macaddrkey][3]);
                 poweravg.push(stationdata[macaddrkey][4]);
+                
+                if ($rootScope.watchedMacAddress == macaddrkey) {
+                    neighborgaugechart.setTitle({text: macaddrkey + '<br><span style="font-size:10px">' + stationdata[macaddrkey][7] + '</span>'});
+                    neighborgaugechart.series[0].points[0].update(stationdata[macaddrkey][3]);
+                    neighborgaugechart.series[1].points[0].update(stationdata[macaddrkey][4]);
+                }
             }
             
             neighborschart.xAxis[0].setCategories(categories);
@@ -142,15 +250,17 @@ function NetStatusCtrl($scope, $interval, socket) {
     };  
     
     $scope.$on('$destroy', function(){
-        if (promise != undefined) {
-            $interval.cancel(promise);
-            promise = undefined;
+        if (refreshPromise != undefined) {
+            $interval.cancel(refreshPromise);
+            refreshPromise = undefined;
         }
     });
-    
 }
 
+//==================================================================================================
 // Controller for the network configs grid
+//==================================================================================================
+
 function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket) {
 
     $scope.init = function() {
@@ -429,3 +539,4 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
     
 
 }
+

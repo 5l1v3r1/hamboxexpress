@@ -4,6 +4,7 @@ import (
     "flag"
     "fmt"
     "execcmd"
+    "simu"
     "encoding/json"
     "os"
 )
@@ -29,11 +30,17 @@ func main() {
 
     options := getOptions()
 
+    
     if len(options.iface) == 0 {
         println("You must give interface name e.g -interface wlan0")
         os.Exit(2)
     }    
     
+    if len(os.Getenv("HAMBOXSIMU")) > 0  {
+        simu.GetStationsDump(options.iface);
+        return;
+    }
+
     stadict := execcmd.IwDevStaDump(options.iface)
     neighdict := execcmd.IpNeighborsList(options.iface)
     outdict := make(map[string]interface{})
