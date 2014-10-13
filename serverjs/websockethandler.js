@@ -6,6 +6,7 @@ var spawn = require('child_process').spawn;
 
 exports.websockethandler = function(socket) {
 
+    //==============================================================================================
     socket.on('cmd', function(cdata) {
         console.log('spawning ' + cdata.cmd + ' ' + cdata.parms);
         var cmd = spawn(cdata.cmd, cdata.parms);
@@ -21,6 +22,7 @@ exports.websockethandler = function(socket) {
         });        
     });
     
+    //==============================================================================================
     socket.on('ifacestate', function(data) {
         //var cmd = spawn("serverscripts/netstatus.py", []);
         var cmd = spawn("serverscripts/go/bin/netstatus", []);
@@ -29,11 +31,11 @@ exports.websockethandler = function(socket) {
             outbuff += data;
         });
         cmd.stdout.on('end', function() {
-            console.log('ifacestate:\n' + outbuff);
             socket.emit('ifacestate', outbuff);
         });
     });
     
+    //==============================================================================================
     socket.on('currentconfig:wireless', function(data) {
         //var cmd = spawn("serverscripts/lanconfig.py", ["-w"]);
         var cmd = spawn("serverscripts/go/bin/lanconfig", ["-wireless"]);
@@ -42,11 +44,23 @@ exports.websockethandler = function(socket) {
             outbuff += data;
         });
         cmd.stdout.on('end', function() {
-            console.log('currentconfig:wireless:\n' + outbuff);
             socket.emit('currentconfig:wireless', outbuff);
         });
     });    
 
+    //==============================================================================================
+    socket.on('stationsdump:query', function(iface) {
+        var cmd = spawn("serverscripts/go/bin/stations", ["-interface", iface]);
+        var outbuff = '';
+        cmd.stdout.on('data', function(data) {
+            outbuff += data;
+        });
+        cmd.stdout.on('end', function() {
+            socket.emit('stationsdump:reply', outbuff);
+        });
+    });
+
+    //==============================================================================================
     socket.on('updatewirelessconfig', function(data) {
         console.log("update:" + data._id + ":" + data.name);
         WirelessConfig.findByIdAndUpdate(data._id, { $set: {
@@ -68,6 +82,7 @@ exports.websockethandler = function(socket) {
         );
     });
 
+    //==============================================================================================
     socket.on('addwirelessconfig', function(data) {
         console.log("create:" + data._id + ":" + data.name);
         wirelessConfigObject = {
@@ -93,7 +108,7 @@ exports.websockethandler = function(socket) {
         });
     });
     
-
+    //==============================================================================================
     socket.on('delwirelessconfig', function(data) {
         console.log("delete:" + data._id + ":" + data.name);
         WirelessConfig.remove({_id: data._id}, function(err) {
@@ -104,6 +119,7 @@ exports.websockethandler = function(socket) {
             }
         });
     });
+    
 };
 
 

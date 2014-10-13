@@ -1,8 +1,29 @@
+<div data-ng-controller="NetStatusCtrl" data-ng-init="init()"></div>
+
 <div class="page-header">
     <b><span class="glyphicon glyphicon-cloud"></span> Network status </b>
 </div>
 
 <div class="container-fluid">
+
+    <div class="row" ng-controller="NetStatusCtrl">
+        <span class="glyphicon glyphicon-time"></span>&nbsp;Refresh&nbsp;
+        <div class="btn-group" dropdown>
+            <button type="button" class="btn" ng-click="neigborStatusRefreshRateSubmit()">{{selectedRate.name}}</button>
+            <button type="button" class="btn dropdown-toggle">
+                <span class="caret"></span>
+                <span class="sr-only">Split button!</span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="rate in refreshRates">
+                    <a href="#/status/network" ng-click="neigborStatusSetRate(rate)">{{rate.name}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="row">&nbsp;</div>
+    
     <div class="row">
         <div class="col-md-8">
             <strong>Neighbors</strong></br>

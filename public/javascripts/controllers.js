@@ -1,9 +1,39 @@
-var hamboxControllers = angular.module('hamboxControllers', []);
+var hamboxControllers = angular.module('hamboxControllers', ['ui.bootstrap']);
 
 // Controller for the network status
-function NetStatusCtrl($scope, socket) {
-    $scope.neighborsPower = {now: [-41, -75], avg: [-40, -76]}
-    $scope.neighborsList = {id: ['10.0.0.3', 'c0:4a:00:11:ef:0d']}
+function NetStatusCtrl($scope, $interval, socket) {
+
+    $scope.init = function() {
+        $scope.neigborStatusRefreshRateSubmit();        
+    }
+    
+    $scope.watchedInterface = "wlan0"
+    $scope.watchedMacAddress = "00:00:00:00:00:00"
+    var neighborsRefreshInterval = 2000;
+    var promise = undefined;
+        
+    $scope.refreshRates = [
+        {id: '0', name: '0.5s', value: 500},
+        {id: '1', name: '1s', value: 1000},
+        {id: '2', name: '2s', value: 2000},
+        {id: '3', name: '3s', value: 3000},
+        {id: '5', name: '5s', value: 5000}
+    ];    
+    
+    $scope.selectedRate = $scope.refreshRates[2];
+    
+    $scope.neigborStatusRefreshRateSubmit = function() {
+        neighborsRefreshInterval = $scope.selectedRate.value;
+        if (promise != undefined) {
+            $interval.cancel(promise);
+        }
+        promise = $interval(getStationsDump, neighborsRefreshInterval);
+    }
+    
+    $scope.neigborStatusSetRate = function(rate) {
+        $scope.selectedRate = rate;
+        $scope.neigborStatusRefreshRateSubmit();
+    }
     
     $scope.neighborsListConfig = {  
         options: {
@@ -17,7 +47,7 @@ function NetStatusCtrl($scope, socket) {
                 text: 'dBm'
             },
             xAxis: {
-                categories: $scope.neighborsList.id,
+                categories: ['00:00:00:00:00:00<br>0.0.0.0'],
                 title: {
                     text: null
                 }                    
@@ -61,21 +91,51 @@ function NetStatusCtrl($scope, socket) {
         },                  
         series: [{
             name: 'Avg',
-            data: $scope.neighborsPower.avg,
+            data: [-60],
             dataLabels: {color: 'red'},
             color: 'red'
         }, {
             name: 'Now',
-            data: $scope.neighborsPower.now,
+            data: [-60],
             dataLabels: {color: 'grey'},
             color: 'grey'
         }]                                                           
     }
     
-    setInterval(function () {
-        var neighchart = $('#neighlist').highcharts();
-        neighchart.xAxis[0].setCategories(['10.0.0.5', '10.0.0.2']);
-    }, 3000);
+    socket.on('stationsdump:reply', function(jsondata) {
+        if (promise != undefined) {
+            var neighborschart = $('#neighlist').highcharts();
+            var categories = [];
+            var powernow = [];
+            var poweravg = [];
+            var stationdata = JSON.parse(jsondata);
+            
+            for (var macaddrkey in stationdata)
+            {
+                categories.push(macaddrkey + '<br>' + stationdata[macaddrkey][7]);
+                powernow.push(stationdata[macaddrkey][3]);
+                poweravg.push(stationdata[macaddrkey][4]);
+            }
+            
+            neighborschart.xAxis[0].setCategories(categories);
+            neighborschart.series[0].setData(poweravg);
+            neighborschart.series[1].setData(powernow);
+        }
+    });
+    
+    var getStationsDump = function () {
+        socket.emit('stationsdump:query', 'wlan0');
+        var currentdate = new Date();
+        //console.log(neighborsRefreshInterval + ">" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds());
+    };  
+    
+    $scope.$on('$destroy', function(){
+        if (promise != undefined) {
+            $interval.cancel(promise);
+            promise = undefined;
+        }
+    });
+    
 }
 
 // Controller for the network configs grid
