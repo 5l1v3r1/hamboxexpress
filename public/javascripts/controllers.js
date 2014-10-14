@@ -4,17 +4,15 @@ var hamboxControllers = angular.module('hamboxControllers', ['ui.bootstrap']);
 // Controller for the network status
 //==================================================================================================
 
-function NetStatusCtrl($scope, $rootScope, $timeout, socket) {
+function NetStatusCtrl($scope, $rootScope, $interval, socket) {
 
     $scope.init = function() {
-        $scope.refreshRateSubmit();  
-        $scope.startRefresh();      
+        $rootScope.refreshPromise = undefined;
+        $scope.refreshRateSubmit();        
     }
     
     $rootScope.watchedInterface = "wlan0"
     $rootScope.watchedMacAddress = "00:00:00:00:00:00";
-    var stopRefresh = true;
-    var refreshInterval = 1000;
         
     $scope.refreshRates = [
         {id: '0', name: '0.5s', value: 500},
@@ -26,30 +24,23 @@ function NetStatusCtrl($scope, $rootScope, $timeout, socket) {
     
     $scope.selectedRate = $scope.refreshRates[2];
     
-    $scope.refreshRateSubmit = function() {
-        refreshInterval = $scope.selectedRate.value;
-    }
-    
     $scope.setRefreshRate = function(rate) {
         $scope.selectedRate = rate;
         $scope.refreshRateSubmit();
     }
+    
+    $scope.refreshRateSubmit = function() {
+        $scope.reStartRefresh();
+    }
 
-    $scope.startRefresh = function() {
-        stopRefresh = false;
-        var loopRefresh = function() {
-           if (!stopRefresh) {
-               socket.emit('stationsdump:query', 'wlan0');
-               $timeout(loopRefresh, refreshInterval);
-           }
-       };
-       loopRefresh(); 
+    $scope.reStartRefresh = function() {
+        if ($rootScope.refreshPromise != undefined) {
+            console.log('cancel promise');
+            $interval.cancel($rootScope.refreshPromise);
+        }
+        $rootScope.refreshPromise = $interval(getStationsDump, $scope.selectedRate.value);
     }
-    
-    $scope.stopRefresh = function() {
-        stopRefresh = true;
-    }
-    
+
     $scope.neighborsListConfig = {  
         options: {
             chart: {
@@ -229,7 +220,7 @@ function NetStatusCtrl($scope, $rootScope, $timeout, socket) {
     }
     
     socket.on('stationsdump:reply', function(jsondata) {
-        if (!stopRefresh) {
+        if ($rootScope.refreshPromise != undefined) {
             var neighborschart = $('#neighlist').highcharts();
             var neighborgaugechart = $('#neighwatch').highcharts();
             var categories = [];
@@ -256,8 +247,17 @@ function NetStatusCtrl($scope, $rootScope, $timeout, socket) {
         }
     });
     
+    var getStationsDump = function () {
+        socket.emit('stationsdump:query', 'wlan0');
+        var currentdate = new Date();
+        console.log($scope.selectedRate.value + ">" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds());
+    };  
+    
     $scope.$on('$destroy', function(){
-        $scope.stopRefresh();
+        if ($rootScope.refreshPromise != undefined) {
+            $interval.cancel($rootScope.refreshPromise);
+            $rootScope.refreshPromise = undefined;
+        }
     });
 }
 
