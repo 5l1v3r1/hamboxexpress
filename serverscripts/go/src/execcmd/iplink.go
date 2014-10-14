@@ -127,6 +127,34 @@ func IpEthList() []string {
     return iplist
 }
 
+//==================================================================================================
+func IpList() map[string]string {
+    app := "ip"
+    args := [2]string{"link", "list"}
+    
+    cmd := exec.Command(app, args[0], args[1])
+    out, err := cmd.Output()
+    
+    if err != nil {
+        println(err.Error())
+        os.Exit(2)
+    }
+    
+    var outstr = string(out)
+    hdr_re := regexp.MustCompile("\\d+: (\\S+):.*state (\\S+) .*")   
+    var hdr_m []string = nil
+    ipdict := make(map[string]string);
+
+    for _, line := range strings.Split(outstr, "\n"){
+        hdr_m = hdr_re.FindStringSubmatch(line);
+
+        if (hdr_m != nil) {
+            ipdict[hdr_m[1]] = hdr_m[2];
+        }
+    }
+
+    return ipdict;
+}
 
 //==================================================================================================
 func IpNeighborsList(iface string) map[string][2]interface{} {

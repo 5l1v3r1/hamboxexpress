@@ -32,7 +32,8 @@ func main() {
 
     
     if len(options.iface) == 0 {
-        println("You must give interface name e.g -interface wlan0")
+        fmt.Fprintln(os.Stderr, "You must give interface name e.g -interface wlan0")
+        fmt.Fprintln(os.Stdout, "[]");
         os.Exit(2)
     }    
     
@@ -65,5 +66,5 @@ func main() {
         println(err.Error())
     }
     
-    fmt.Println(string(outdict_json))        
+    fmt.Fprintln(os.Stdout, string(outdict_json))        
 }

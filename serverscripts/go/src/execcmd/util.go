@@ -42,8 +42,8 @@ func ExecWithArgs(cmd string, args []string) (bool, string) {
     out, err := exec.Command(cmd, args...).CombinedOutput()
     
     if err != nil {
-        fmt.Printf("%s", string(out))
-        fmt.Printf("%s\n", err)
+        fmt.Fprintf(os.Stderr, "%s", string(out))
+        fmt.Fprintf(os.Stderr, "%s\n", err)
         ok = false
     }    
     

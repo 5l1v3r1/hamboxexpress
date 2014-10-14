@@ -1,6 +1,7 @@
 package execcmd
 
 import (
+    "fmt"
     "strings"
     "regexp"
     "os"
@@ -17,8 +18,8 @@ func IwDevAllDetails() map[string]interface{} {
     out, err := cmd.Output()
     
     if err != nil {
-        println(err.Error())
-        os.Exit(2)
+        fmt.Fprintln(os.Stderr, err.Error());
+        return make(map[string]interface{});
     }
     
     var outstr = string(out)
@@ -196,7 +197,7 @@ func IwDevStaDump(iface string) map[string][7]interface{} {
     ok, outstr := ExecWithArgs("iw", []string{"dev", iface, "station", "dump"})
     
     if !ok {
-        os.Exit(2)
+        return make(map[string][7]interface{});
     }
         
     macaddr_re   := regexp.MustCompile("Station (\\S+) \\S+")

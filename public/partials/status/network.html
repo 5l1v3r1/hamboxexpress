@@ -7,18 +7,35 @@
 <div class="container-fluid">
 
     <div class="row" ng-controller="NetStatusCtrl">
-        <span class="glyphicon glyphicon-time"></span>&nbsp;Refresh&nbsp;
-        <div class="btn-group" dropdown>
-            <button type="button" class="btn" ng-click="refreshRateSubmit()">{{selectedRate.name}}</button>
-            <button type="button" class="btn dropdown-toggle">
-                <span class="caret"></span>
-                <span class="sr-only">Split button!</span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-                <li ng-repeat="rate in refreshRates">
-                    <a href="#/status/network" ng-click="setRefreshRate(rate)">{{rate.name}}</a>
-                </li>
-            </ul>
+        <div class="col-md-2">
+            <span class="glyphicon glyphicon-time"></span>&nbsp;Refresh&nbsp;
+            <div class="btn-group" dropdown>
+                <button type="button" class="btn" ng-click="refreshRateSubmit()">{{selectedRate.name}}</button>
+                <button type="button" class="btn dropdown-toggle">
+                    <span class="caret"></span>
+                    <span class="sr-only">Split button!</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li ng-repeat="rate in refreshRates">
+                        <a href="#/status/network" ng-click="setRefreshRate(rate)">{{rate.name}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <span class="glyphicon glyphicon-flash"></span>&nbsp;Interface&nbsp;
+            <div class="btn-group" dropdown>
+                <button type="button" class="btn">{{selectedWirelessInterface}}</button>
+                <button type="button" class="btn dropdown-toggle">
+                    <span class="caret"></span>
+                    <span class="sr-only">Split button!</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li ng-repeat="iface in wirelessInterfacesList">
+                        <a href="#/status/network" ng-click="setSelectedWirelessInterface(iface)">{{iface}}</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     

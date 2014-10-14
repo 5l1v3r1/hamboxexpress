@@ -61,6 +61,18 @@ exports.websockethandler = function(socket) {
     });
 
     //==============================================================================================
+    socket.on('wirelessifacelist', function(data) {
+        var cmd = spawn("serverscripts/go/bin/wdevlist", []);
+        var outbuff = '';
+        cmd.stdout.on('data', function(data) {
+            outbuff += data;
+        });
+        cmd.stdout.on('end', function() {
+            socket.emit('wirelessifacelist', outbuff);
+        });
+    });
+    
+    //==============================================================================================
     socket.on('updatewirelessconfig', function(data) {
         console.log("update:" + data._id + ":" + data.name);
         WirelessConfig.findByIdAndUpdate(data._id, { $set: {

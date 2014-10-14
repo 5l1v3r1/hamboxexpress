@@ -6,9 +6,24 @@ var hamboxControllers = angular.module('hamboxControllers', ['ui.bootstrap']);
 
 function NetStatusCtrl($scope, $rootScope, $interval, socket) {
 
+    $scope.wirelessInterfacesList = [];
+    $scope.selectedWirelessInterface = "select";
+
     $scope.init = function() {
         $rootScope.refreshPromise = undefined;
-        $scope.refreshRateSubmit();        
+        $scope.reStartRefresh();        
+        socket.emit('wirelessifacelist', {});
+    }
+    
+    $scope.setSelectedWirelessInterface = function(iface) {
+        $scope.selectedWirelessInterface = iface;
+        $scope.reStartRefresh();
+    }
+    
+    $scope.getWirelessInterfacesList = function() {
+        $scope.wirelessInterfacesList = [];
+        $scope.selectedWirelessInterface = "select";
+        socket.emit('wirelessifacelist', {});        
     }
     
     $rootScope.watchedInterface = "wlan0"
@@ -26,11 +41,11 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
     
     $scope.setRefreshRate = function(rate) {
         $scope.selectedRate = rate;
-        $scope.refreshRateSubmit();
+        $scope.reStartRefresh();
     }
     
     $scope.refreshRateSubmit = function() {
-        $scope.reStartRefresh();
+        //$scope.reStartRefresh();
     }
 
     $scope.reStartRefresh = function() {
@@ -40,7 +55,7 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
         }
         $rootScope.refreshPromise = $interval(getStationsDump, $scope.selectedRate.value);
     }
-
+    
     $scope.neighborsListConfig = {  
         options: {
             chart: {
@@ -220,7 +235,7 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
     }
     
     socket.on('stationsdump:reply', function(jsondata) {
-        if ($rootScope.refreshPromise != undefined) {
+        if (($rootScope.refreshPromise != undefined) && (jsondata.length > 0)) {
             var neighborschart = $('#neighlist').highcharts();
             var neighborgaugechart = $('#neighwatch').highcharts();
             var categories = [];
@@ -247,10 +262,19 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
         }
     });
     
+    socket.on('wirelessifacelist', function(jsondata) {
+        var ifacedata = JSON.parse(jsondata);
+        
+        for (var i in ifacedata) {
+            $scope.wirelessInterfacesList.push(ifacedata[i]);
+            console.log(ifacedata[i]);
+        }
+    });
+    
     var getStationsDump = function () {
-        socket.emit('stationsdump:query', 'wlan0');
-        var currentdate = new Date();
-        console.log($scope.selectedRate.value + ">" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds());
+        socket.emit('stationsdump:query', $scope.selectedWirelessInterface);
+        //var currentdate = new Date();
+        //console.log($scope.selectedRate.value + ">" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds());
     };  
     
     $scope.$on('$destroy', function(){
