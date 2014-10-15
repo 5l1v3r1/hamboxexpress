@@ -277,6 +277,12 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
                     overflow: 'justify'
                 }
             },
+            tooltip: {
+                formatter: function () {
+                    return '<span style="color:'+this.series.color+'">' + this.series.name + ' <b>' + Highcharts.numberFormat(this.y,2) + '%</b></span>';
+                },
+                useHTML: true
+            },
             plotOptions: {
                 bar: {
                     dataLabels: {
@@ -345,6 +351,12 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
                 labels: {
                     overflow: 'justify'
                 }
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<span style="color:'+this.series.color+'">' + this.series.name + ' <b>' + Highcharts.numberFormat(this.y,2) + ' Mb/s</b></span>';
+                },
+                useHTML: true
             },
             plotOptions: {
                 bar: {
