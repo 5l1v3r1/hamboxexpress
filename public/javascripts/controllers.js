@@ -8,6 +8,7 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
 
     $scope.wirelessInterfacesList = [];
     $scope.selectedWirelessInterface = "select";
+    $scope.macAndIp = "00:00:00:00:00:00";
 
     $scope.init = function() {
         $rootScope.refreshPromise = undefined;
@@ -26,7 +27,6 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
         socket.emit('wirelessifacelist', {});        
     }
     
-    $rootScope.watchedInterface = "wlan0"
     $rootScope.watchedMacAddress = "00:00:00:00:00:00";
         
     $scope.refreshRates = [
@@ -50,7 +50,6 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
 
     $scope.reStartRefresh = function() {
         if ($rootScope.refreshPromise != undefined) {
-            console.log('cancel promise');
             $interval.cancel($rootScope.refreshPromise);
         }
         $rootScope.refreshPromise = $interval(getStationsDump, $scope.selectedRate.value);
@@ -59,7 +58,14 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
     $scope.neighborsListConfig = {  
         options: {
             chart: {
-                type: 'bar'
+                type: 'bar',
+                spacingBottom: 5,
+                spacingTop: 15,
+                spacingLeft: 5,
+                spacingRight: 10,
+                // Explicitly tell the width and height of a chart
+                width: null,
+                height: 470
             },
             title: {
                 text: 'Received power'
@@ -68,7 +74,7 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
                 text: 'dBm'
             },
             xAxis: {
-                categories: ['00:00:00:00:00:00<br>0.0.0.0'],
+                categories: ['00:00:00:00:00:00'],
                 title: {
                     text: null
                 }                    
@@ -104,11 +110,11 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
                 series: {threshold: -100}
             },  
             legend: {
-                layout: 'vertical',
+                layout: 'horizontal',
                 align: 'right',
                 verticalAlign: 'top',
-                x: -40,
-                y: 100,
+                x: -150,
+                y: -5,
                 floating: true,
                 borderWidth: 1,
                 backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
@@ -132,7 +138,6 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
     }
     
     $scope.setWatchedMacAddress = function(category) {
-        console.log(category);
         $rootScope.watchedMacAddress = category.split("<")[0];
     }
     
@@ -145,22 +150,24 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
                     linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
                     stops: [
                         [0, '#FFF4C6'],
+                        //[0, '#EAEAEA'],
                         [0.3, '#FFFFFF'],
                         [1, '#FFF4C6']
+                        //[1, '#EAEAEA']
                     ]
                 },
                 plotBackgroundImage: null,
-                height: 300
+                height: 280
             },            
             title: {
-                text: '00:00:00:00:00:00<br>0.0.0.0'
+                text: 'Received power'
             },
             pane: [{
                 startAngle: -70,
                 endAngle: 70,
                 background: null,
-                center: ['50%', '105%'],
-                size: 360
+                center: ['50%', '108%'],
+                size: 380
             }],    
             yAxis: [{
                 min: -100,
@@ -208,11 +215,11 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
                     dataLabels: {
                         enabled: true,
                         format: "{y: .0f}",
-                        y: -32
+                        y: -40
                     },
                     dial: {
                         radius: '100%',
-                        rearLength: "-35%"
+                        rearLength: "-30%"
                     }
                 }
             },
@@ -223,21 +230,161 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
         series: [{
             data: [-60],
             yAxis: 0,
-            dataLabels: {x: -15}
+            dataLabels: {x: -15, backgroundColor: 'white'}
         }, {
             data: [-60],
             yAxis: 0,
-            dataLabels: {x: 15, color: 'red'},
+            dataLabels: {x: 15, color: 'red', backgroundColor: 'white'},
             dial: {
                 backgroundColor: 'red'
             }            
         }]             
     }
     
+    $scope.neighborTxStatsConfig = {
+        options: {
+            chart: {
+                type: 'bar',
+                // Edit chart spacing
+                spacingBottom: 15,
+                spacingTop: 5,
+                spacingLeft: 5,
+                spacingRight: 5,
+                // Explicitly tell the width and height of a chart
+                width: 200,
+                height: 160
+            },
+            title: {
+                text: 'Tx packets'
+            },
+            subtitle: {
+                text: '0'
+            },
+            xAxis: {
+                categories: [''],
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                max: null,
+                title: {
+                    text: '%',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '{y:.2f}'
+                    }
+                }
+            },
+            legend: {
+                layout: 'horizontal',
+                align: 'left',
+                verticalAlign: 'bottom',
+                x: 0,
+                y: 12,
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                shadow: true
+            }
+        },
+        series: [{
+            name: 'Failed',
+            data: [0],
+            dataLabels: {color: 'red'},
+            color: '#FF6666'
+        }, {
+            name: 'Retried',
+            data: [0],
+            dataLabels: {color: 'grey'},
+            color: 'grey'
+        }]
+    }
+
+    $scope.neighborRatesConfig = {
+        options: {
+            chart: {
+                type: 'bar',
+                // Edit chart spacing
+                spacingBottom: 15,
+                spacingTop: 5,
+                spacingLeft: 5,
+                spacingRight: 5,
+                // Explicitly tell the width and height of a chart
+                width: 200,
+                height: 160
+            },
+            title: {
+                text: 'Bit rates'
+            },
+            subtitle: {
+                text: 'Mb/s'
+            },
+            xAxis: {
+                categories: [''],
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                max: null,
+                title: {
+                    text: 'Mb/s',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '{y:.2f}'
+                    }
+                }
+            },
+            legend: {
+                layout: 'horizontal',
+                align: 'left',
+                verticalAlign: 'bottom',
+                x: 0,
+                y: 12,
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                shadow: true
+            }
+        },
+        series: [{
+            name: 'Tx',
+            data: [0],
+            dataLabels: {color: 'red'},
+            color: '#FF6666'
+        }, {
+            name: 'Rx',
+            data: [0],
+            dataLabels: {color: 'grey'},
+            color: 'grey'
+        }]
+    }
+
     socket.on('stationsdump:reply', function(jsondata) {
         if (($rootScope.refreshPromise != undefined) && (jsondata.length > 0)) {
             var neighborschart = $('#neighlist').highcharts();
             var neighborgaugechart = $('#neighwatch').highcharts();
+            var neighbortxstatschart = $('#neightxstats').highcharts();
+            var neighborrateschart = $('#neighrates').highcharts();
             var categories = [];
             var powernow = [];
             var poweravg = [];
@@ -250,9 +397,24 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
                 poweravg.push(stationdata[macaddrkey][4]);
                 
                 if ($rootScope.watchedMacAddress == macaddrkey) {
-                    neighborgaugechart.setTitle({text: macaddrkey + '<br><span style="font-size:10px">' + stationdata[macaddrkey][7] + '</span>'});
+                    if (stationdata[macaddrkey][7].length > 0) {
+                        $scope.macAndIp = macaddrkey + ' - ' + stationdata[macaddrkey][7];
+                    } else {
+                        $scope.macAndIp = macaddrkey;
+                    }
                     neighborgaugechart.series[0].points[0].update(stationdata[macaddrkey][3]);
                     neighborgaugechart.series[1].points[0].update(stationdata[macaddrkey][4]);
+                    neighbortxstatschart.setTitle(null, {text: stationdata[macaddrkey][0]});
+                    var retry_rate  = (stationdata[macaddrkey][1]/stationdata[macaddrkey][0])*100.0;
+                    var failed_rate = (stationdata[macaddrkey][2]/stationdata[macaddrkey][0])*100.0;
+                    neighbortxstatschart.series[0].points[0].update(failed_rate);
+                    neighbortxstatschart.series[1].points[0].update(retry_rate);
+                    var rx_rate = stationdata[macaddrkey][5];
+                    var tx_rate = stationdata[macaddrkey][6];
+                    if (tx_rate == 0.3) { tx_rate = 0.25; }
+                    if (rx_rate == 0.3) { rx_rate = 0.25; }
+                    neighborrateschart.series[0].points[0].update(rx_rate);
+                    neighborrateschart.series[1].points[0].update(tx_rate);
                 }
             }
             
@@ -267,7 +429,6 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
         
         for (var i in ifacedata) {
             $scope.wirelessInterfacesList.push(ifacedata[i]);
-            console.log(ifacedata[i]);
         }
     });
     
