@@ -7,6 +7,8 @@ var hamboxControllers = angular.module('hamboxNetConfigControllers', []);
 
 function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket) {
 
+    $scope.wirelessAllInterfacesList = [];
+
     $scope.init = function() {
         $scope.refreshIfaceState();
         $scope.refreshCurrentWireless();
@@ -52,6 +54,7 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
                 bw: bw,
                 txpower: txpower
             });
+            $scope.wirelessAllInterfacesList.push(iwkey);
         }
         
         for (var ipkey in data_ip)
@@ -95,9 +98,9 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
             }
         }
     });
-    
+
     $scope.wirelessconfigs = WirelessConfig.query();
-    
+
     $scope.wirelessIfaceStateGridOptions = { data: "wirelessifaces",
         enableCellSelection: false,
         enableRowSelection: false,
@@ -190,6 +193,8 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         alert("TODO");
     }
     
+    $scope.availableBandwidths = [5, 10, 20];
+
     $scope.wirelessConfigGridOptions = { data: "wirelessconfigs",
         enableCellSelection: true,
         enableRowSelection: false,
@@ -198,7 +203,11 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         showFilter: true,
         columnDefs: [
             {field:'name', displayName: 'Name', enableCellEdit: true, width: 140},
-            {field:'iface', displayName:'Iface', enableCellEdit: true, width: 60},
+            {field:'iface',
+                displayName:'Iface',
+                enableCellEdit: true,
+                width: 70,
+                cellTemplate: '<div align="center"><select ng-model="row.entity.iface" ng-options="iface for iface in wirelessAllInterfacesList"></select></div>'},
             {field:'iploc', displayName:'IP', enableCellEdit: true, width: 120},
             {field:'iplocmask', displayName:'Mask', enableCellEdit: true, width: 60},
             //{field:'ipnet', displayName:'HamNet IP', enableCellEdit: true},
@@ -206,7 +215,12 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
             {field:'essid', displayName:'ESSID', enableCellEdit: true, width: 160},
             {field:'bssid', displayName:'BSSID', enableCellEdit: true, width: 140},
             {field:'freq', displayName:'F(MHz)', enableCellEdit: true, width: 80},
-            {field:'bw', displayName:'BW(MHz)', enableCellEdit: true, width: 80},
+            //{field:'bw', displayName:'BW(MHz)', enableCellEdit: true, width: 80},
+            {field:'bw',
+                displayName:'BW(MHz)',
+                enableCellEdit: true,
+                width: 80,
+                cellTemplate: '<div align="center"><select ng-model="row.entity.bw" ng-options="bw for bw in availableBandwidths"></select></div>'},
             {field:'txpower', displayName:'P(mBm)', enableCellEdit: true, width: 80},
             { field:'', displayName: 'Save', enableCellEdit: false, width: 60,
                 cellTemplate: '<button id="wcEditBtn" type="button"  ng-click="saveWirelessConfigItem(\
@@ -265,10 +279,16 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
     }   
      
     $scope.addWirelessConfigRow = function() {
+        var iface_init = '';
+
+        if ($scope.wirelessAllInterfacesList.length > 0) {
+            iface_init = $scope.wirelessAllInterfacesList[0];
+        }
+
         $scope.wirelessconfigs.push({
             _id: -1,
             name: 'new', 
-            iface: 'wlan0',
+            iface: iface_init,
             iploc: '10.0.0.1',
             iplocmask: 24,
             ipnet: '',

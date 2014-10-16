@@ -7,22 +7,6 @@ var spawn = require('child_process').spawn;
 exports.websockethandler = function(socket) {
 
     //==============================================================================================
-    socket.on('cmd', function(cdata) {
-        console.log('spawning ' + cdata.cmd + ' ' + cdata.parms);
-        var cmd = spawn(cdata.cmd, cdata.parms);
-        var outb = '';
-        cmd.stdout.on('data', function(data) {
-            outb += data;
-        });
-        cmd.stdout.on('end', function() {
-            console.log('stdout:\n' + outb);
-        });
-        cmd.on('close', function (code) {
-          console.log('child process exited with code ' + code);
-        });        
-    });
-    
-    //==============================================================================================
     socket.on('ifacestate', function(data) {
         //var cmd = spawn("serverscripts/netstatus.py", []);
         var cmd = spawn("serverscripts/go/bin/netstatus", []);

@@ -2,16 +2,32 @@ package main
 
 import (
     "fmt"
+    "flag"
     "execcmd"
     "simu"
     "encoding/json"
     "os"
 )
 
+type Options struct {
+    all bool
+}
 
+//==================================================================================================
+func getOptions() Options {
+    allPtr := flag.Bool("all", false, "list all interfaces including those that are down")
+
+    var options Options
+    flag.Parse()
+    options.all = *allPtr
+
+    return options
+}
 //==================================================================================================
 func main() {
     
+    options := getOptions()
+
     if len(os.Getenv("HAMBOXSIMU")) > 0  {
         simu.GetWirelessIfaces();
         return;
@@ -23,7 +39,7 @@ func main() {
 
     for iface, _ := range iwdict {
         if state,ok := ipdict[iface]; ok {
-            if state == "UP" {
+            if (state == "UP") || (options.all) {
                 iwlist = append(iwlist, iface)
             }
         }
