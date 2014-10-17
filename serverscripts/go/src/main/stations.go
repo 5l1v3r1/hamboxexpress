@@ -29,7 +29,6 @@ func getOptions() Options {
 func main() {
 
     options := getOptions()
-
     
     if len(options.iface) == 0 {
         fmt.Fprintln(os.Stderr, "You must give interface name e.g -interface wlan0")
@@ -37,13 +36,17 @@ func main() {
         os.Exit(2)
     }    
     
+    var stadict map[string][7]interface{}
+    var neighdict map[string][2]interface{}
+    
     if len(os.Getenv("HAMBOXSIMU")) > 0  {
-        simu.GetStationsDump(options.iface);
-        return;
+        stadict = simu.IwDevStaDump(options.iface)
+        neighdict = simu.IpNeighborsList(options.iface)
+    } else {
+        stadict = execcmd.IwDevStaDump(options.iface)
+        neighdict = execcmd.IpNeighborsList(options.iface)
     }
-
-    stadict := execcmd.IwDevStaDump(options.iface)
-    neighdict := execcmd.IpNeighborsList(options.iface)
+    
     outdict := make(map[string]interface{})
     var stalist [9]interface{}
     

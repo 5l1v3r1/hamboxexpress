@@ -141,6 +141,50 @@ func IwDevList() []string {
 
 
 //==================================================================================================
+func IwDevPhyList() map[string]int {
+
+    ok, outstr := ExecWithArgs("iw", []string{"dev"})
+    
+    if !ok {
+        return make(map[string]int)
+    }
+
+    phy_re := regexp.MustCompile("phy#(\\d+)")
+    iface_re := regexp.MustCompile("\\s+Interface (\\S+)")
+    var phy_m []string = nil
+    var iface_m []string = nil
+
+    var iface string
+    var phynum int
+    var first bool = true
+    devdict := make(map[string]int)
+    
+    for _, line := range strings.Split(outstr, "\n") {
+        
+        phy_m = phy_re.FindStringSubmatch(line)
+        iface_m = iface_re.FindStringSubmatch(line)
+        
+        if (phy_m != nil) {
+            if !first {
+                devdict[iface] = phynum
+            }
+            StrToInt(phy_m[1], &phynum)
+            first = false
+            phy_m = nil // consume
+        }
+        if iface_m != nil {
+            iface = iface_m[1]
+            iface_m = nil // consume
+        }
+    }
+    
+    devdict[iface] = phynum // last one
+    
+    return devdict
+}
+
+
+//==================================================================================================
 func getTxPower(iface string) int {
     app := "iwconfig"
     args := [1]string{iface}

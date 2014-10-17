@@ -255,10 +255,16 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
                 height: 160
             },
             title: {
-                text: 'Tx packets'
+                text: 'Tx packets',
+                style: {"fontSize": "14px"},
+                floating: true,
+                align: 'left',
+                x: 0,
+                y: 15
             },
             subtitle: {
-                text: '0'
+                text: '0',
+                align: 'right'           
             },
             xAxis: {
                 categories: [''],
@@ -333,10 +339,16 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
                 height: 160
             },
             title: {
-                text: 'Throughput'
+                text: 'Throughput',
+                style: {"fontSize": "14px"},
+                floating: true,
+                align: 'left',
+                x: 0,
+                y: 15
             },
             subtitle: {
-                text: 'Mb/s'
+                text: 'Mb/s',
+                x: 10
             },
             xAxis: {
                 categories: [''],

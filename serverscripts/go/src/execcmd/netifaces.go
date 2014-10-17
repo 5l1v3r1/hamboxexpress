@@ -4,12 +4,10 @@ import (
     "fmt"
     "strings"
     "regexp"
-    "os"
-    "os/exec"
 )
 
 //==================================================================================================
-func GetIfaceWirelessConfig(iface string) map[string]interface{} {
+func GetIfaceWirelessConfig(iface string, ipath string) map[string]interface{} {
     
     //auto wlan0
     //iface wlan0 inet manual
@@ -20,18 +18,13 @@ func GetIfaceWirelessConfig(iface string) map[string]interface{} {
     //post-up /sbin/iw dev wlan0 set txpower fixed 300
     //pre-down /sbin/iw dev wlan0 ibss leave    
     
-    app := "cat"
-    args := [1]string{"/etc/network/interface." + iface}
+    ifacedict := make(map[string]interface{})
     
-    cmd := exec.Command(app, args[0])
-    out, err := cmd.Output()
+    ok, outstr := ExecWithArgs("cat", []string{ipath + "/etc/network/interface." + iface})
     
-    if err != nil {
-        println(err.Error())
-        os.Exit(2)
+    if !ok {
+        return ifacedict
     }
-    
-    var outstr = string(out)
     
     inet_re := regexp.MustCompile(fmt.Sprintf("iface %s inet (\\S+)", iface))
     type_re := regexp.MustCompile(fmt.Sprintf("up /sbin/iw dev %s set type (\\S+)", iface))
@@ -46,7 +39,6 @@ func GetIfaceWirelessConfig(iface string) map[string]interface{} {
     var pwr_m []string = nil
     var aint int
        
-    ifacedict := make(map[string]interface{})
     ifacedict["iface"] = iface
     
     for _, line := range strings.Split(outstr, "\n"){
@@ -91,24 +83,19 @@ func GetIfaceWirelessConfig(iface string) map[string]interface{} {
 }
 
 //==================================================================================================
-func GetIfaceWiredConfig(iface string) map[string]interface{} {
+func GetIfaceWiredConfig(iface string, ipath string) map[string]interface{} {
     
     //iface eth0 inet static
     //address 192.168.0.51
     //netmask 255.255.255.0
     
-    app := "cat"
-    args := [1]string{"/etc/network/interface." + iface}
+    ifacedict := make(map[string]interface{})
     
-    cmd := exec.Command(app, args[0])
-    out, err := cmd.Output()
+    ok, outstr := ExecWithArgs("cat", []string{ipath + "/etc/network/interface." + iface})
     
-    if err != nil {
-        println(err.Error())
-        os.Exit(2)
+    if !ok {
+        return ifacedict
     }
-    
-    var outstr = string(out)
     
     inet_re := regexp.MustCompile(fmt.Sprintf("iface %s inet (\\S+)", iface))
     addr_re := regexp.MustCompile("address (\\S+)")
@@ -122,7 +109,6 @@ func GetIfaceWiredConfig(iface string) map[string]interface{} {
     var addr string = ""
     var mask string = ""
        
-    ifacedict := make(map[string]interface{})
     ifacedict["iface"] = iface
     
     for _, line := range strings.Split(outstr, "\n"){

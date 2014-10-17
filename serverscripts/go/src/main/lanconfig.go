@@ -5,7 +5,9 @@ import (
     "fmt"
     "strings"
     "execcmd"
+    "simu"
     "encoding/json"
+    "os"
 )
 
 type Options struct {
@@ -37,13 +39,26 @@ func main() {
     
     if options.wireless {
         
+        var iwcfg map[string]interface{}
         var iwlist []map[string]interface{}
+        var iwnames []string
         
-        iwnames := execcmd.IwDevList()
+        if len(os.Getenv("HAMBOXSIMU")) > 0  {
+            iwnames = simu.IwDevList()
+        } else {
+            iwnames = execcmd.IwDevList()
+        }
         
         for _, iwname := range iwnames {
-            iwcfg := execcmd.GetIfaceWirelessConfig(iwname      )
-            iwlist = append(iwlist, iwcfg)
+            if len(os.Getenv("HAMBOXSIMU")) > 0  {
+                iwcfg = execcmd.GetIfaceWirelessConfig(iwname, "serverscripts/go/simuroot/")
+            } else {
+                iwcfg = execcmd.GetIfaceWirelessConfig(iwname, "/")
+            }
+            
+            if len(iwcfg) > 0 {
+                iwlist = append(iwlist, iwcfg)
+            }
         }
         
         iwlist_json, err := json.Marshal(iwlist)
@@ -58,18 +73,30 @@ func main() {
         
         var iplist []map[string]interface{}
         iwnamedict := make(map[string]int)
-        iwnames := execcmd.IwDevList()
+        var iwnames []string
+        var ethnames []string
+        
+        if len(os.Getenv("HAMBOXSIMU")) > 0  {
+            iwnames = simu.IwDevList()
+            ethnames = simu.IpEthList()
+        } else {
+            iwnames = execcmd.IwDevList()
+            ethnames = execcmd.IpEthList()
+        }
         
         for _, iwname := range iwnames {
             iwnamedict[iwname] = 0
         }
         
-        ethnames := execcmd.IpEthList()
-        
         for _, ethname := range ethnames {
             if _,ok := iwnamedict[ethname]; !ok { // exclude wireless 
-                ethcfg := execcmd.GetIfaceWiredConfig(ethname)
-                iplist = append(iplist, ethcfg)
+                if len(os.Getenv("HAMBOXSIMU")) > 0  {
+                    ethcfg := execcmd.GetIfaceWiredConfig(ethname, "serverscripts/go/simuroot/")
+                    iplist = append(iplist, ethcfg)
+                } else {
+                    ethcfg := execcmd.GetIfaceWiredConfig(ethname, "/")
+                    iplist = append(iplist, ethcfg)
+                }
             }
         }
         

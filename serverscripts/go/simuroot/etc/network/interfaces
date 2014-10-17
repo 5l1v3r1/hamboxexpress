@@ -1,0 +1,6 @@
+auto lo
+iface lo inet loopback
+
+# sourced configs
+source /etc/network/interface.eth0
+source /etc/network/interface.wlan0

@@ -28,13 +28,17 @@ func main() {
     
     options := getOptions()
 
-    if len(os.Getenv("HAMBOXSIMU")) > 0  {
-        simu.GetWirelessIfaces();
-        return;
-    }
+    var ipdict map[string]string
+    var iwdict map[string]interface{}
 
-    ipdict := execcmd.IpList()
-    iwdict := execcmd.IwDevAllDetails()
+    if len(os.Getenv("HAMBOXSIMU")) > 0  {
+        ipdict = simu.IpList()
+        iwdict = simu.IwDevAllDetails()
+    } else {
+        ipdict = execcmd.IpList()
+        iwdict = execcmd.IwDevAllDetails()
+    }
+    
     iwlist := make([]string, 0, 4)
 
     for iface, _ := range iwdict {

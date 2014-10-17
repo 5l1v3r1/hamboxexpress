@@ -3,7 +3,9 @@ package main
 import (
     "fmt"
     "execcmd"
+    "simu"
     "encoding/json"
+    "os"
 )
 
 
@@ -11,8 +13,14 @@ import (
 func main() {
     
     netdict := make(map[string]interface{})
-    netdict["ip"] = execcmd.IpAddrShow()
-    netdict["iw"] = execcmd.IwDevAllDetails()
+    
+    if len(os.Getenv("HAMBOXSIMU")) > 0  {    
+        netdict["ip"] = simu.IpAddrShow()
+        netdict["iw"] = simu.IwDevAllDetails()
+    } else {
+        netdict["ip"] = execcmd.IpAddrShow()
+        netdict["iw"] = execcmd.IwDevAllDetails()
+    }
     
     netdict_json, err := json.Marshal(netdict)
     
