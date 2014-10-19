@@ -7,21 +7,41 @@ var hamboxControllers = angular.module('hamboxNetConfigControllers', []);
 
 function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket) {
 
+    //==================================================================
     $scope.wirelessAllInterfacesList = [];
 
+    //==================================================================
     $scope.init = function() {
         $scope.refreshIfaceState();
         $scope.refreshCurrentWireless();
+        socket.emit('iwdevphyinfo', {});
     }
 
+    //==================================================================
+    socket.on('iwdevphyinfo', function(jsondata) {
+
+        var data = JSON.parse(jsondata);
+        $scope.iwdevfreqs = {};
+        
+        for (var ikey in data) {
+            var freqlist = [];
+            for (var iband in data[ikey]["bands"]) {
+                freqlist = freqlist.concat(data[ikey]["bands"][iband]);
+            }
+            $scope.iwdevfreqs[ikey] = freqlist;
+        }
+    });
+
+    //==================================================================
     socket.on('ifacestate', function(jsondata) {
+        
         var data = JSON.parse(jsondata);
         var data_iw = data["iw"];
         var data_ip = data["ip"];
         $scope.wirelessifaces = [];
         $scope.wiredifaces = [];
-        for (var iwkey in data_iw)
-        {
+        
+        for (var iwkey in data_iw) {
             var ipdata = data_ip[iwkey];
             var iwdata = data_iw[iwkey];
             var macaddr = iwdata[1];
@@ -29,18 +49,20 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
             var active = (ipdata[1] == "UP");
             var ipaddr = "";
             var ipmask = 0;
+            var essid ="";
             var chan = 0;
             var freq = 0;
             var bw = 0;
-            var txpower = 0;
+            var mbm = 0;
             if (active)
             {
                 ipaddr = ipdata[4];
                 ipmask = ipdata[5];
+                essid = iwdata[3];
                 chan = iwdata[4];
                 freq = iwdata[5];
                 bw = iwdata[6];
-                txpower = iwdata[7];
+                mbm = iwdata[7];
             }
             $scope.wirelessifaces.push({
                 iface: iwkey,
@@ -49,10 +71,12 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
                 active: active,
                 ipaddr: ipaddr,
                 ipmask: ipmask,
+                essid: essid,
+                bssid: "82:CC:16:64:64:41",
                 chan: chan,
                 freq: freq,
                 bw: bw,
-                txpower: txpower
+                mbm: mbm
             });
             $scope.wirelessAllInterfacesList.push(iwkey);
         }
@@ -86,6 +110,7 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         }
     });
     
+    //==================================================================
     socket.on('currentconfig:wireless', function(jsondata) {
         var data = JSON.parse(jsondata);
         $scope.wirelesscurrentconfig = [];
@@ -99,8 +124,10 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         }
     });
 
+    //==================================================================
     $scope.wirelessconfigs = WirelessConfig.query();
 
+    //==================================================================
     $scope.wirelessIfaceStateGridOptions = { data: "wirelessifaces",
         enableCellSelection: false,
         enableRowSelection: false,
@@ -115,12 +142,18 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
             {field:'macaddr', displayName:'MAC', enableCellEdit: false, width: 140},
             {field:'ipaddr', displayName:'IP', enableCellEdit: false, width: 120},
             {field:'ipmask', displayName:'Mask', enableCellEdit: false, width: 60},
+            {field:'essid', displayName:'ESSID', enableCellEdit: false, width: 160},            
             {field:'freq', displayName:'F(MHz)', enableCellEdit: false, width: 80},
             {field:'bw', displayName:'BW(MHz)', enableCellEdit: false, width: 80},
-            {field:'txpower', displayName:'P(mBm)', enableCellEdit: false, width: 80}
+            {field:'mbm', displayName:'P(mBm)', enableCellEdit: false, width: 80},
+            { field:'', displayName: 'Store', enableCellEdit: false, width: 60,
+                cellTemplate: '<button id="cfgStoreBtn" type="button"  ng-click="newWirelessConfigRowFromCurrent(\
+                    row.entity)" ><span class="glyphicon glyphicon-download"></span></button>'
+            }
         ]
     };
         
+    //==================================================================
     $scope.wiredIfaceStateGridOptions = { data: "wiredifaces",
         enableCellSelection: false,
         enableRowSelection: false,
@@ -138,6 +171,7 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         ]
     };
     
+    //==================================================================
     $scope.wirelessCurrentConfigGridOptions = { data: "wirelesscurrentconfig",
         enableCellSelection: false,
         enableRowSelection: false,
@@ -168,6 +202,7 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         ]
     };
     
+    //==================================================================
     $scope.newWirelessConfigRowFromCurrent = function(data) {
         $scope.wirelessconfigs.push({
             _id: -1,
@@ -185,16 +220,25 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         });
     }
 
+    //==================================================================
     $scope.runCurrentWirelessConfig = function(data) {
         alert("TODO");
     }
     
+    //==================================================================
     $scope.delCurrentWirelessConfig = function(data) {
         alert("TODO");
     }
     
+    //==================================================================
     $scope.availableBandwidths = [5, 10, 20];
 
+    //==================================================================
+    $scope.availableFrequencies = function(iface) {
+        return $scope.iwdevfreqs[iface];
+    }
+
+    //==================================================================
     $scope.wirelessConfigGridOptions = { data: "wirelessconfigs",
         enableCellSelection: true,
         enableRowSelection: false,
@@ -214,7 +258,11 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
             //{field:'ipnetmask', displayName:'NetM', enableCellEdit: true},
             {field:'essid', displayName:'ESSID', enableCellEdit: true, width: 160},
             {field:'bssid', displayName:'BSSID', enableCellEdit: true, width: 140},
-            {field:'freq', displayName:'F(MHz)', enableCellEdit: true, width: 80},
+            {field:'freq', 
+                displayName:'F(MHz)', 
+                enableCellEdit: true, 
+                width: 80,
+                cellTemplate: '<div align="center"><select ng-model="row.entity.freq" ng-options="freq for freq in availableFrequencies(row.entity.iface)"></select></div>'},
             //{field:'bw', displayName:'BW(MHz)', enableCellEdit: true, width: 80},
             {field:'bw',
                 displayName:'BW(MHz)',
@@ -222,21 +270,28 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
                 width: 80,
                 cellTemplate: '<div align="center"><select ng-model="row.entity.bw" ng-options="bw for bw in availableBandwidths"></select></div>'},
             {field:'txpower', displayName:'P(mBm)', enableCellEdit: true, width: 80},
-            { field:'', displayName: 'Save', enableCellEdit: false, width: 60,
-                cellTemplate: '<button id="wcEditBtn" type="button"  ng-click="saveWirelessConfigItem(\
-                    row)" ><span class="glyphicon glyphicon-save"></span></button>'
+            { field:'', 
+                displayName: 'Save', 
+                enableCellEdit: false, 
+                width: 60,
+                cellTemplate: '<button id="wcEditBtn" type="button"  ng-click="saveWirelessConfigItem(row)" ><span class="glyphicon glyphicon-save"></span></button>'
             },
-            { field:'', displayName: 'Use', enableCellEdit: false, width: 60,
-                cellTemplate: '<button id="wcRunBtn" type="button"  ng-click="useWirelessConfigItem(\
-                    row)" ><span class="glyphicon glyphicon-upload"></span></button>'
+            { field:'', 
+                displayName: 'Use', 
+                enableCellEdit: false, 
+                width: 60,
+                cellTemplate: '<button id="wcRunBtn" type="button"  ng-click="useWirelessConfigItem(row)" ><span class="glyphicon glyphicon-upload"></span></button>'
             },
-            { field:'', displayName: 'Delete', enableCellEdit: false, width: 60,
-                cellTemplate: '<button id="wcDelBtn" type="button"  ng-click="delWirelessConfigItem(\
-                    row)" ><span class="glyphicon glyphicon-remove"></span></button>'
+            { field:'', 
+                displayName: 'Delete', 
+                enableCellEdit: false, 
+                width: 60,
+                cellTemplate: '<button id="wcDelBtn" type="button"  ng-click="delWirelessConfigItem(row)" ><span class="glyphicon glyphicon-remove"></span></button>'
             }
         ]
     };
     
+    //==================================================================
     $scope.saveWirelessConfigItem = function(row) {
         if (row.entity._id == -1) {
             socket.emit('addwirelessconfig', row.entity);
@@ -246,10 +301,12 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         }
     }
     
+    //==================================================================
     $scope.useWirelessConfigItem = function(row) {
         alert("TODO");
     }
     
+    //==================================================================
     $scope.delWirelessConfigItem = function(row) {
         if (row.entity._id == -1) {
             var index = this.row.rowIndex;
@@ -262,22 +319,27 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
         }
     }
     
+    //==================================================================
     $scope.refreshWirelessConfig = function() {
         $scope.wirelessconfigs = WirelessConfig.query();
     }
     
+    //==================================================================
     $scope.refreshIfaceState = function() {
         InetState.query();
     }
 
+    //==================================================================
     $scope.refreshCurrentWireless= function() {
         CurrentConfig.wireless();
     }
     
+    //==================================================================
     $scope.refreshCurrentWired= function() {
         CurrentConfig.wired();
     }   
      
+    //==================================================================
     $scope.addWirelessConfigRow = function() {
         var iface_init = '';
 
@@ -300,7 +362,5 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
             txpower: 300
         });
     }
-    
-
 }
 

@@ -7,6 +7,54 @@ var spawn = require('child_process').spawn;
 exports.websockethandler = function(socket) {
 
     //==============================================================================================
+    socket.on('hostnames', function(data) {
+        var cmd = spawn("serverscripts/go/bin/hostnames", []);
+        var outbuff = '';
+        cmd.stdout.on('data', function(data) {
+            outbuff += data;
+        });
+        cmd.stdout.on('end', function() {
+            socket.emit('hostnames', outbuff);
+        });
+    });
+    
+    //==============================================================================================
+    socket.on('getmeshtopology:latlon', function(data) {
+        var cmd = spawn("serverscripts/go/bin/latlongraph", []);
+        var outbuff = '';
+        cmd.stdout.on('data', function(data) {
+            outbuff += data;
+        });
+        cmd.stdout.on('end', function() {
+            socket.emit('getmeshtopology:latlon', outbuff);
+        });
+    });
+    
+    //==============================================================================================
+    socket.on('getmeshtopology:dot', function(data) {
+        var cmd = spawn("serverscripts/go/bin/dotgraph", []);
+        var outbuff = '';
+        cmd.stdout.on('data', function(data) {
+            outbuff += data;
+        });
+        cmd.stdout.on('end', function() {
+            socket.emit('getmeshtopology:dot', outbuff);
+        });
+    });
+    
+    //==============================================================================================
+    socket.on('iwdevphyinfo', function(data) {
+        var cmd = spawn("serverscripts/go/bin/wphycap", []);
+        var outbuff = '';
+        cmd.stdout.on('data', function(data) {
+            outbuff += data;
+        });
+        cmd.stdout.on('end', function() {
+            socket.emit('iwdevphyinfo', outbuff);
+        });
+    });
+    
+    //==============================================================================================
     socket.on('ifacestate', function(data) {
         //var cmd = spawn("serverscripts/netstatus.py", []);
         var cmd = spawn("serverscripts/go/bin/netstatus", []);

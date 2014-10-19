@@ -29,8 +29,8 @@ func IwDevAllDetails() map[string]interface{} {
     iwarray[2] = "IBSS"               // wireless link type
     iwarray[3] = "BroadbandHamnet-v2" // ESSID
     iwarray[4] = -3                   // channel
-    iwarray[5] = 2392                 // frequency
-    iwarray[6] = 5                    // bandwidth
+    iwarray[5] = 2412                 // frequency
+    iwarray[6] = 20                   // bandwidth
     iwarray[7] = 600                  // tx power (mBm)
     iwdict[iface] = iwarray
     

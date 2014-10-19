@@ -1,0 +1,4 @@
+SCRIPT=$(readlink -f "$BASH_SOURCE")
+SCRIPTPATH=$(dirname "$SCRIPT")
+export GOPATH=$SCRIPTPATH
+export GOBIN=$SCRIPTPATH/bin

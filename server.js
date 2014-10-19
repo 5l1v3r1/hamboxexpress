@@ -17,7 +17,6 @@ app.set('views', path.join(__dirname, 'views'));
 app.engine('html', require('ejs').renderFile);
 //app.set('view engine', 'jade');
 app.use(express.logger('dev'));
-app.use(express.logger());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);

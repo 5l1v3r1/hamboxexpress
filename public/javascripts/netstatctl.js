@@ -9,11 +9,15 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
     $scope.wirelessInterfacesList = [];
     $scope.selectedWirelessInterface = "select";
     $scope.macAndIp = "00:00:00:00:00:00";
+    $scope.wirelessInterfacesList = [];
+    $scope.hostnames = {};
+    $scope.macaddresses = [];
 
     $scope.init = function() {
         $rootScope.refreshPromise = undefined;
         $scope.reStartRefresh();        
         socket.emit('wirelessifacelist', {});
+        socket.emit('hostnames', {});
     }
     
     $scope.setSelectedWirelessInterface = function(iface) {
@@ -22,7 +26,6 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
     }
     
     $scope.getWirelessInterfacesList = function() {
-        $scope.wirelessInterfacesList = [];
         $scope.selectedWirelessInterface = "select";
         socket.emit('wirelessifacelist', {});        
     }
@@ -102,7 +105,7 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
                     point: {
                         events: {
                             click: function() {
-                                $scope.setWatchedMacAddress(this.category);
+                                $scope.setWatchedMacAddress(this.x);
                             }
                         }
                     }
@@ -137,8 +140,9 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
         }]                                                           
     }
     
-    $scope.setWatchedMacAddress = function(category) {
-        $rootScope.watchedMacAddress = category.split("<")[0];
+    $scope.setWatchedMacAddress = function(categoryindex) {
+        $rootScope.watchedMacAddress = $scope.macaddresses[categoryindex];
+        //$rootScope.watchedMacAddress = category.split("<")[0];
     }
     
     $scope.neighborWatchConfig = {
@@ -415,6 +419,7 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
             var neighborgaugechart = $('#neighwatch').highcharts();
             var neighbortxstatschart = $('#neightxstats').highcharts();
             var neighborrateschart = $('#neighrates').highcharts();
+            $scope.macaddresses = [];
             var categories = [];
             var powernow = [];
             var poweravg = [];
@@ -422,16 +427,32 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
             
             for (var macaddrkey in stationdata)
             {
-                categories.push(macaddrkey + '<br>' + stationdata[macaddrkey][7]);
+                var ipaddress = stationdata[macaddrkey][7];
+                var hostname = "";
+                var categoryname = "";
+                var neighbortitle = "";
+                
+                if (ipaddress.length > 0) {
+                    categoryname = ipaddress;
+                    if (ipaddress in $scope.hostnames) {
+                        hostname = $scope.hostnames[ipaddress];
+                        categoryname += '<br>' + hostname;
+                        neighbortitle = hostname + ' - ' + ipaddress + ' - ';
+                    } else {
+                        neighbortitle = ipaddress + ' - ';
+                    }
+                } else {
+                    categoryname = macaddrkey;
+                }
+                
+                neighbortitle += macaddrkey;
+                $scope.macaddresses.push(macaddrkey);
+                categories.push(categoryname);
                 powernow.push(stationdata[macaddrkey][3]);
                 poweravg.push(stationdata[macaddrkey][4]);
                 
                 if ($rootScope.watchedMacAddress == macaddrkey) {
-                    if (stationdata[macaddrkey][7].length > 0) {
-                        $scope.macAndIp = macaddrkey + ' - ' + stationdata[macaddrkey][7];
-                    } else {
-                        $scope.macAndIp = macaddrkey;
-                    }
+                    $scope.macAndIp = neighbortitle;
                     neighborgaugechart.series[0].points[0].update(stationdata[macaddrkey][3]);
                     neighborgaugechart.series[1].points[0].update(stationdata[macaddrkey][4]);
                     neighbortxstatschart.setTitle(null, {text: stationdata[macaddrkey][0]});
@@ -460,6 +481,11 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
         for (var i in ifacedata) {
             $scope.wirelessInterfacesList.push(ifacedata[i]);
         }
+    });
+    
+    socket.on('hostnames', function(jsondata) {
+        var hostnames = JSON.parse(jsondata);
+        $scope.hostnames = hostnames
     });
     
     var getStationsDump = function () {
