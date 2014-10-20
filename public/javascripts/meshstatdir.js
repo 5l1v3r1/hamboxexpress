@@ -125,6 +125,11 @@ hamboxApp.directive('openlayersMap', function() {
             pointRadius: 4,
             graphicName: "circle"
         };
+        var linkStyle = {
+            strokeColor: "#FF6666",
+            strokeOpacity: 1,
+            strokeWidth: "2"
+        };
         var markers = [];
         var pointsmap = {};
         var selectControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
@@ -135,6 +140,7 @@ hamboxApp.directive('openlayersMap', function() {
             var position = new OpenLayers.LonLat(lon, lat).transform( fromProjection, toProjection);
             var selfPoint = new OpenLayers.Geometry.Point(position.lon, position.lat);
             var selfAttr = {
+                type: "node",
                 station_name: name,
                 ip: ip,
                 lat: lat,
@@ -142,7 +148,7 @@ hamboxApp.directive('openlayersMap', function() {
             };
             var selfMarker = new OpenLayers.Feature.Vector(selfPoint, selfAttr, selfStyle);
             markers.push(selfMarker);
-            pointsmap[ip] = {point: selfPoint, self: 1};
+            pointsmap[ip] = {point: selfPoint, self: 1, name: name, lat: lat, lon: lon};
             map.setCenter(position,12);
         }
         
@@ -150,6 +156,7 @@ hamboxApp.directive('openlayersMap', function() {
             var position = new OpenLayers.LonLat(lon, lat).transform( fromProjection, toProjection);
             var nodePoint = new OpenLayers.Geometry.Point(position.lon, position.lat);
             var nodeAttr = {
+                type: "node",
                 station_name: name,
                 ip: ip,
                 lat: lat,
@@ -157,13 +164,45 @@ hamboxApp.directive('openlayersMap', function() {
             };
             var nodeMarker = new OpenLayers.Feature.Vector(nodePoint, nodeAttr, nodeStyle);
             markers.push(nodeMarker);
-            pointsmap[ip] = {point: nodePoint, self: 0};
+            pointsmap[ip] = {point: nodePoint, self: 0, name: name, lat: lat, lon: lon};
         }
         
         function Link(fromip, toip, lq, nlq, etx) {
+            var fromPoint = pointsmap[fromip];
+            var toPoint = pointsmap[toip];
+            var distance = f4exbloc.distance(fromPoint.lat, fromPoint.lon, toPoint.lat, toPoint.lon);
+            var bearingTo = f4exbloc.bearing(fromPoint.lat, fromPoint.lon, toPoint.lat, toPoint.lon);
+            var bearingFrom = f4exbloc.bearing(toPoint.lat, toPoint.lon, fromPoint.lat, fromPoint.lon);
+            var linkAttr = {
+                type: "link",
+                from: fromPoint.name,
+                to: toPoint.name,
+                distance: distance,
+                bearingTo: bearingTo,
+                bearingFrom: bearingFrom
+            };
+            var linkLine = new OpenLayers.Geometry.LineString([fromPoint.point, toPoint.point]);
+            var linkMarker = new OpenLayers.Feature.Vector(linkLine, linkAttr, linkStyle);
+            markers.push(linkMarker);
         }
         
         function PLink(fromip, toip, lq, nlq, etx, tolat, tolon, tohna, fromlat, fromlon, fromhna) {
+            var fromPoint = pointsmap[fromip];
+            var toPoint = pointsmap[toip];
+            var distance = f4exbloc.distance(fromPoint.lat, fromPoint.lon, toPoint.lat, toPoint.lon);
+            var bearingTo = f4exbloc.bearing(fromPoint.lat, fromPoint.lon, toPoint.lat, toPoint.lon);
+            var bearingFrom = f4exbloc.bearing(toPoint.lat, toPoint.lon, fromPoint.lat, fromPoint.lon);
+            var linkAttr = {
+                type: "link",
+                from: fromPoint.name,
+                to: toPoint.name,
+                distance: distance,
+                bearingTo: bearingTo,
+                bearingFrom: bearingFrom
+            };
+            var linkLine = new OpenLayers.Geometry.LineString([fromPoint.point, toPoint.point]);
+            var linkMarker = new OpenLayers.Feature.Vector(linkLine, linkAttr, linkStyle);
+            markers.push(linkMarker);
         }
         
         function onFeatureHighlighted(evt) {
@@ -177,12 +216,19 @@ hamboxApp.directive('openlayersMap', function() {
                 this.destroy();
             }
             feature = evt.feature;
+            var popupStr = "";
+            if (feature.attributes.type == "node") {
+                popupStr = "<strong>"+feature.attributes.station_name + "</strong><br>" +
+                    "IP: " + feature.attributes.ip + '<br>' +
+                    "Pos: " + feature.attributes.lat + "," + feature.attributes.lon;
+            } else if (feature.attributes.type == "link") {
+                popupStr = "<strong>" + feature.attributes.from + "&#10142;" + feature.attributes.to + "</strong><br>" +
+                    feature.attributes.distance.toFixed(3) + "km &#8614;" + feature.attributes.bearingTo.toFixed(1) + " &#8612;" + feature.attributes.bearingFrom.toFixed(1); 
+            }
             popup = new OpenLayers.Popup.FramedCloud("featurePopup",
                 feature.geometry.getBounds().getCenterLonLat(),
                 new OpenLayers.Size(100,100),
-                    "<strong>"+feature.attributes.station_name + "</strong><br>" +
-                    "IP: " + feature.attributes.ip + '<br>' +
-                    "Pos: " + feature.attributes.lat + "," + feature.attributes.lon,
+                popupStr,
                 null, true, onPopupClose
             );
             feature.popup = popup;
