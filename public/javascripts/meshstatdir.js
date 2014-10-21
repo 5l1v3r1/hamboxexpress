@@ -64,8 +64,10 @@ hamboxApp.directive('visNetwork', function() {
             function onNetworkSelect(properties) {
                 if (properties.nodes.length > 0) {
                     scope.$parent.centerIP = properties.nodes[0]; // update in controller
-                    scope.$parent.$digest();
+                } else {
+                    scope.$parent.centerIP = "";
                 }
+                scope.$parent.$digest();
             }
         }
     };
@@ -110,13 +112,8 @@ hamboxApp.directive('openlayersMap', function() {
             map.zoomToMaxExtent();
             
             attributes.$observe('olsrlatlon', function(latlonjs) {
-                interpretLatLonJS(latlonjs, map, vectorLayer, positionsmap);
+                interpretLatLonJS(latlonjs, map, vectorLayer, positionsmap, scope.$parent.meshtabledata);
             }); 
-            
-            /*
-            scope.$parent.$watch('centerIP', function() {
-                console.log("got: " + scope.$parent.centerIP);
-            });*/ 
             
             attributes.$observe('centerip', function() {
                 if (scope.$parent.centerIP.length > 0) {
@@ -128,7 +125,7 @@ hamboxApp.directive('openlayersMap', function() {
         }
     };
     
-    function interpretLatLonJS(latlonjs, map, vectorLayer,  positionsmap) {
+    function interpretLatLonJS(latlonjs, map, vectorLayer, positionsmap, tabledata) {
         
         var fromProjection = new OpenLayers.Projection("EPSG:4326"); // Transform from WGS 1984
         var toProjection = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection
@@ -211,7 +208,16 @@ hamboxApp.directive('openlayersMap', function() {
             };
             var linkLine = new OpenLayers.Geometry.LineString([fromPoint.point, toPoint.point]);
             var linkMarker = new OpenLayers.Feature.Vector(linkLine, linkAttr, linkStyle);
+            var tablerow = {};
             markers.push(linkMarker);
+            tablerow.fromname = linkAttr.from;
+            tablerow.toname = linkAttr.to;
+            tablerow.lq = lq;
+            tablerow.nlq = nlq;
+            tablerow.etx = etx;
+            tablerow.distance = linkAttr.distance;
+            tablerow.bearing = linkAttr.bearingTo;
+            tabledata.push(tablerow);
         }
         
         function PLink(fromip, toip, lq, nlq, etx, tolat, tolon, tohna, fromlat, fromlon, fromhna) {
@@ -230,7 +236,16 @@ hamboxApp.directive('openlayersMap', function() {
             };
             var linkLine = new OpenLayers.Geometry.LineString([fromPoint.point, toPoint.point]);
             var linkMarker = new OpenLayers.Feature.Vector(linkLine, linkAttr, linkStyle);
+            var tablerow = {};
             markers.push(linkMarker);
+            tablerow.fromname = linkAttr.from;
+            tablerow.toname = linkAttr.to;
+            tablerow.lq = lq;
+            tablerow.nlq = nlq;
+            tablerow.etx = etx;
+            tablerow.distance = linkAttr.distance.toFixed(3);
+            tablerow.bearing = linkAttr.bearingTo.toFixed(1);
+            tabledata.push(tablerow);
         }
         
         function onFeatureHighlighted(evt) {

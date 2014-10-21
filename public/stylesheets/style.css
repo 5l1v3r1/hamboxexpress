@@ -46,6 +46,12 @@ body {
     height: 94px;
 }
 
+.meshStateGridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 620px;
+    height: 150px;
+};
+
 .row-padded {
     padding: 35px;
     background-color: #F7F7F7;
