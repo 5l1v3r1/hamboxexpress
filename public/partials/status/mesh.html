@@ -1,25 +1,27 @@
-<div data-ng-controller="MeshStatusCtrl" data-ng-init="init()"></div>
+<div ng-init="init()">
 
-<div class="page-header">
-    <b><span class="glyphicon glyphicon-th"></span> Mesh status </b>
-</div>
+    <div class="page-header">
+        <b><span class="glyphicon glyphicon-th"></span> Mesh status </b>
+    </div>
 
-<div class="container-fluid">
+    <div class="container-fluid">
 
-    <div class="row" style="width: 1280px">
-        <div class="col-lg-6">
-            <div class="row"><strong>Topology</strong>&nbsp;</div>
-            <div class="row" ng-controller="MeshStatusCtrl" style="border: 1px solid #ccc; width: 600px; height: 400px; float: left">
-                <vis-network olsrlatlon="{{meshtopologylatlon}}"></vis-network>
+        <div class="row" style="width: 1280px">
+            <div class="col-lg-6">
+                <div class="row"><strong>Topology</strong>&nbsp;</div>
+                <div class="row" style="border: 1px solid #ccc; width: 600px; height: 400px; float: left">
+                    <vis-network olsrlatlon="{{meshtopologylatlon}}"></vis-network>
+                </div>
+                <div class="row"><button ng-click="refreshMeshTopology()"><span class="glyphicon glyphicon-refresh"></span> Refresh</button></div>
             </div>
-            <div class="row"><button ng-click="refreshMeshTopology()"><span class="glyphicon glyphicon-refresh"></span> Refresh</button></div>
-        </div>
-        <div class="col-lg-6">
-            <div class="row"><strong>Map</strong>&nbsp;</div>
-            <div class="row" ng-controller="MeshStatusCtrl" style="border: 1px solid #ccc; width: 600px; height: 400px; float: left">
-                <openlayers-map width=580 height=380 olsrlatlon="{{meshtopologylatlon}}"></openlayers-map>
+            <div class="col-lg-6">
+                <div class="row"><strong>Map</strong>&nbsp;</div>
+                <div class="row" style="border: 1px solid #ccc; width: 600px; height: 400px; float: left">
+                    <openlayers-map width=580 height=380 olsrlatlon="{{meshtopologylatlon}}" centerip="{{centerIP}}"></openlayers-map>
+                </div>
             </div>
         </div>
+
     </div>
 
 </div>

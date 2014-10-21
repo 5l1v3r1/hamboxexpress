@@ -6,6 +6,8 @@ var hamboxControllers = angular.module('hamboxMeshStatusControllers', ['ui.boots
 
 function MeshStatusCtrl($scope, $rootScope, $interval, socket) {
 
+    $scope.centerIP = "test";
+    
     $scope.init = function() {
         socket.emit('getmeshtopology:latlon', {});
     }
@@ -26,5 +28,8 @@ function MeshStatusCtrl($scope, $rootScope, $interval, socket) {
         socket.emit('getmeshtopology:latlon', {});
     }
 
+    $scope.testApply = function() {
+        console.log('test apply');
+    }
 }
 

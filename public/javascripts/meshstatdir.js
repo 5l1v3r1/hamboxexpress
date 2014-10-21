@@ -2,7 +2,7 @@
 // Directives for the mesh status
 //==================================================================================================
 
-hamboxApp.directive('visNetwork', function() {
+hamboxApp.directive('visNetwork', function(MeshStatDirService) {
 
     return {
         restrict: 'E',
@@ -41,6 +41,7 @@ hamboxApp.directive('visNetwork', function() {
                 dot: "digraph topology{\"please wait...\"}"
             };
             var network = new vis.Network(element[0], datadot, options);
+            network.on('select', onNetworkSelect);
 
             attributes.$observe('dot', function(dotvalue) {
                 var datadot = {
@@ -59,6 +60,13 @@ hamboxApp.directive('visNetwork', function() {
                 };
                 network.setData(data);
             });
+            
+            function onNetworkSelect(properties) {
+                if (properties.nodes.length > 0) {
+                    scope.$parent.centerIP = properties.nodes[0]; // update in controller
+                    scope.$parent.$digest();
+                }
+            }
         }
     };
     
@@ -80,11 +88,12 @@ hamboxApp.directive('visNetwork', function() {
 
 });
 
-hamboxApp.directive('openlayersMap', function() {
+hamboxApp.directive('openlayersMap', function($rootScope, MeshStatDirService) {
     return {
         restrict: 'E',
         scope: {
-            olsrlatlon: "@"
+            olsrlatlon: "@",
+            centerip: "@"
         },
         link: function(scope, element, attributes) {
             var mapWidth = parseInt(attributes.width);
@@ -97,9 +106,20 @@ hamboxApp.directive('openlayersMap', function() {
             map.addLayer(vectorLayer);
             map.zoomToMaxExtent();
             
+            console.log(scope);
+            
             attributes.$observe('olsrlatlon', function(latlonjs) {
                 interpretLatLonJS(latlonjs, map, vectorLayer);
-            });            
+            }); 
+            
+            /*
+            scope.$parent.$watch('centerIP', function() {
+                console.log("got: " + scope.$parent.centerIP);
+            });*/ 
+            
+            attributes.$observe('centerip', function() {
+                console.log("got: " + scope.$parent.centerIP);
+            }); 
         }
     };
     
