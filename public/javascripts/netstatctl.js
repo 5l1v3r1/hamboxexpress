@@ -30,7 +30,7 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
         socket.emit('wirelessifacelist', {});        
     }
     
-    $rootScope.watchedMacAddress = "00:00:00:00:00:00";
+    $scope.watchedMacAddress = "00:00:00:00:00:00";
         
     $scope.refreshRates = [
         {id: '0', name: '0.5s', value: 500},
@@ -141,8 +141,7 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
     }
     
     $scope.setWatchedMacAddress = function(categoryindex) {
-        $rootScope.watchedMacAddress = $scope.macaddresses[categoryindex];
-        //$rootScope.watchedMacAddress = category.split("<")[0];
+        $scope.watchedMacAddress = $scope.macaddresses[categoryindex];
     }
     
     $scope.neighborWatchConfig = {
@@ -451,7 +450,7 @@ function NetStatusCtrl($scope, $rootScope, $interval, socket) {
                 powernow.push(stationdata[macaddrkey][3]);
                 poweravg.push(stationdata[macaddrkey][4]);
                 
-                if ($rootScope.watchedMacAddress == macaddrkey) {
+                if ($scope.watchedMacAddress == macaddrkey) {
                     $scope.macAndIp = neighbortitle;
                     neighborgaugechart.series[0].points[0].update(stationdata[macaddrkey][3]);
                     neighborgaugechart.series[1].points[0].update(stationdata[macaddrkey][4]);

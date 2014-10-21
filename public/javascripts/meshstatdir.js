@@ -2,7 +2,7 @@
 // Directives for the mesh status
 //==================================================================================================
 
-hamboxApp.directive('visNetwork', function(MeshStatDirService) {
+hamboxApp.directive('visNetwork', function() {
 
     return {
         restrict: 'E',
@@ -88,7 +88,7 @@ hamboxApp.directive('visNetwork', function(MeshStatDirService) {
 
 });
 
-hamboxApp.directive('openlayersMap', function($rootScope, MeshStatDirService) {
+hamboxApp.directive('openlayersMap', function() {
     return {
         restrict: 'E',
         scope: {
@@ -96,20 +96,21 @@ hamboxApp.directive('openlayersMap', function($rootScope, MeshStatDirService) {
             centerip: "@"
         },
         link: function(scope, element, attributes) {
+
             var mapWidth = parseInt(attributes.width);
             var mapHeight = parseInt(attributes.height);
             var mapsize = new OpenLayers.Size(mapWidth, mapHeight);
             var map = new OpenLayers.Map(element[0], {size: mapsize});
             var osmLayer = new OpenLayers.Layer.OSM();
             var vectorLayer = new OpenLayers.Layer.Vector("Overlay");
+            var positionsmap = {};
+
             map.addLayer(osmLayer);
             map.addLayer(vectorLayer);
             map.zoomToMaxExtent();
             
-            console.log(scope);
-            
             attributes.$observe('olsrlatlon', function(latlonjs) {
-                interpretLatLonJS(latlonjs, map, vectorLayer);
+                interpretLatLonJS(latlonjs, map, vectorLayer, positionsmap);
             }); 
             
             /*
@@ -118,15 +119,22 @@ hamboxApp.directive('openlayersMap', function($rootScope, MeshStatDirService) {
             });*/ 
             
             attributes.$observe('centerip', function() {
-                console.log("got: " + scope.$parent.centerIP);
+                if (scope.$parent.centerIP.length > 0) {
+                    if (scope.$parent.centerIP in positionsmap) {
+                        map.setCenter(positionsmap[scope.$parent.centerIP]);
+                    }
+                }
             }); 
         }
     };
     
-    function interpretLatLonJS(latlonjs, map, vectorLayer) {
+    function interpretLatLonJS(latlonjs, map, vectorLayer,  positionsmap) {
         
         var fromProjection = new OpenLayers.Projection("EPSG:4326"); // Transform from WGS 1984
         var toProjection = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection
+        var markers = [];
+        var pointsmap = {};
+        
         var selfStyle = {
             strokeColor: "#AA0000",
             strokeOpacity: 1,
@@ -150,8 +158,6 @@ hamboxApp.directive('openlayersMap', function($rootScope, MeshStatDirService) {
             strokeOpacity: 1,
             strokeWidth: "2"
         };
-        var markers = [];
-        var pointsmap = {};
         var selectControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
             hover: true
         });
@@ -167,6 +173,7 @@ hamboxApp.directive('openlayersMap', function($rootScope, MeshStatDirService) {
                 lon: lon
             };
             var selfMarker = new OpenLayers.Feature.Vector(selfPoint, selfAttr, selfStyle);
+            positionsmap[ip] = position;
             markers.push(selfMarker);
             pointsmap[ip] = {point: selfPoint, self: 1, name: name, lat: lat, lon: lon};
             map.setCenter(position,12);
@@ -183,6 +190,7 @@ hamboxApp.directive('openlayersMap', function($rootScope, MeshStatDirService) {
                 lon: lon
             };
             var nodeMarker = new OpenLayers.Feature.Vector(nodePoint, nodeAttr, nodeStyle);
+            positionsmap[ip] = position;
             markers.push(nodeMarker);
             pointsmap[ip] = {point: nodePoint, self: 0, name: name, lat: lat, lon: lon};
         }
