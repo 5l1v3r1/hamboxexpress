@@ -44,13 +44,18 @@ function MeshStatusCtrl($scope, $rootScope, $interval, socket) {
     //==================================================================
     $scope.meshStateGridOptions = { data: "meshtabledata",
         enableCellSelection: false,
-        enableRowSelection: false,
+        enableRowSelection: true,
         enableCellEdit: false,
         enableColumnResize: true,
         showFilter: true,
+        rowTemplate: '<div style="height: 100%" ng-class="{ selected: row.selected}">' +
+                         '<div ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngCell">' +
+                            '<div ng-cell></div>' +
+                         '</div>' +
+                     '</div>',
         columnDefs: [
-            {field:'fromname', displayName:'From', enableCellEdit: false, width: 100},
-            {field:'toname', displayName:'To', enableCellEdit: false, width: 100},
+            {field:'fromname', displayName:'From', enableCellEdit: false, width: 180},
+            {field:'toname', displayName:'To', enableCellEdit: false, width: 180},
             {field:'lq', displayName:'LQ', enableCellEdit: false, width: 80},
             {field:'nlq', displayName:'NLQ', enableCellEdit: false, width: 80},
             {field:'etx', displayName:'ETX', enableCellEdit: false, width: 80},
@@ -58,5 +63,21 @@ function MeshStatusCtrl($scope, $rootScope, $interval, socket) {
             {field:'bearing', displayName:'To(deg)', enableCellEdit: false, width: 80}
         ]
     };
+    
+    //==================================================================
+    $scope.resetMeshTableRowSelection = function() {
+        for (r in $scope.meshtabledata) {
+            $scope.meshStateGridOptions.selectRow(r, false);
+        }
+    }
+    
+    //==================================================================
+    $scope.selectMeshTableRow = function(fromip, toip) {
+        for (r in $scope.meshtabledata) {
+            if (($scope.meshtabledata[r].fromip == fromip) && ($scope.meshtabledata[r].toip == toip)) {
+                $scope.meshStateGridOptions.selectRow(r, true);
+            }
+        }
+    }    
 }
 

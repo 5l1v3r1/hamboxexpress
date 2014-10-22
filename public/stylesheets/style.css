@@ -48,9 +48,15 @@ body {
 
 .meshStateGridStyle {
     border: 1px solid rgb(212,212,212);
-    width: 620px;
+    width: 780px;
     height: 150px;
-};
+}
+
+.ngRow.selected{
+  font-weight: bold;
+  color: white; 
+  background-color:#FF6060;
+}
 
 .row-padded {
     padding: 35px;

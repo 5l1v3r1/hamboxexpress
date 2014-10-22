@@ -67,6 +67,11 @@ hamboxApp.directive('visNetwork', function() {
                 } else {
                     scope.$parent.centerIP = "";
                 }
+                scope.$parent.resetMeshTableRowSelection();
+                for (i in properties.edges) {
+                    var fromto = properties.edges[i].split(":");
+                    scope.$parent.selectMeshTableRow(fromto[0], fromto[1]);
+                }
                 scope.$parent.$digest();
             }
         }
@@ -80,10 +85,10 @@ hamboxApp.directive('visNetwork', function() {
             nodes.push({id: ip, label: name, title: name+'<br>'+ip});
         }
         function Link(fromip, toip, lq, nlq, etx) {
-            edges.push({from: fromip, to: toip, label: lq, title: lq+':'+nlq+':'+etx});
+            edges.push({id: fromip+':'+toip, from: fromip, to: toip, label: lq, title: lq+':'+nlq+':'+etx});
         }
         function PLink(fromip, toip, lq, nlq, etx, tolat, tolon, tohna, fromlat, fromlon, fromhna) {
-            edges.push({from: fromip, to: toip, label: lq, title: lq+':'+nlq+':'+etx});
+            edges.push({id: fromip+':'+toip, from: fromip, to: toip, label: lq, title: lq+':'+nlq+':'+etx});
         }
         eval(latlonjs);
     }
@@ -210,6 +215,8 @@ hamboxApp.directive('openlayersMap', function() {
             var linkMarker = new OpenLayers.Feature.Vector(linkLine, linkAttr, linkStyle);
             var tablerow = {};
             markers.push(linkMarker);
+            tablerow.fromip = fromip;
+            tablerow.toip = toip
             tablerow.fromname = linkAttr.from;
             tablerow.toname = linkAttr.to;
             tablerow.lq = lq;
@@ -238,6 +245,8 @@ hamboxApp.directive('openlayersMap', function() {
             var linkMarker = new OpenLayers.Feature.Vector(linkLine, linkAttr, linkStyle);
             var tablerow = {};
             markers.push(linkMarker);
+            tablerow.fromip = fromip;
+            tablerow.toip = toip
             tablerow.fromname = linkAttr.from;
             tablerow.toname = linkAttr.to;
             tablerow.lq = lq;
