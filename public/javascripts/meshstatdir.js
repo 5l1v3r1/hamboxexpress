@@ -19,6 +19,13 @@ hamboxApp.directive('visNetwork', function() {
                             border: '#AA0000',
                             background: '#FF6666'
                         }
+                    },
+                    hna: {
+                        fontColor: 'black',
+                        color: {
+                            border: 'grey',
+                            background: '#FFF4C6'
+                        }
                     }
                 },
                 edges: {
@@ -53,7 +60,29 @@ hamboxApp.directive('visNetwork', function() {
             attributes.$observe('olsrlatlon', function(latlonjs) {
                 var nodes = [];
                 var edges = [];
-                interpretLatLonJS(latlonjs, nodes, edges);
+                var namedict = {};
+                interpretLatLonJS(latlonjs, nodes, edges, namedict, scope.$parent.hnadict);
+                scope.$parent.routetabledata = [];
+                for (ipkey in scope.$parent.routesdict) {
+                    var routetablerow = {};
+                    var routeval = scope.$parent.routesdict[ipkey];
+                    var gwip = routeval[1];
+                    if (ipkey in namedict) {
+                        routetablerow.name = namedict[ipkey];
+                    } else {
+                        routetablerow.name = ipkey+'/'+routeval[0];
+                    }
+                    if (gwip in namedict) {
+                        routetablerow.gw = namedict[gwip];
+                    } else {
+                        routetablerow.gw = gwip;
+                    }
+                    routetablerow.ip = ipkey;
+                    routetablerow.metric = routeval[2];
+                    routetablerow.etx = routeval[3];
+                    routetablerow.iface = routeval[4];
+                    scope.$parent.routetabledata.push(routetablerow);
+                }
                 var data = {
                     nodes: nodes,
                     edges: edges
@@ -62,27 +91,43 @@ hamboxApp.directive('visNetwork', function() {
             });
             
             function onNetworkSelect(properties) {
+                scope.$parent.resetMeshRoutesTableRowSelection();
                 if (properties.nodes.length > 0) {
                     scope.$parent.centerIP = properties.nodes[0]; // update in controller
+                    scope.$parent.selectMeshRoutesTableRow(properties.nodes[0]);
                 } else {
                     scope.$parent.centerIP = "";
                 }
-                scope.$parent.resetMeshTableRowSelection();
+                scope.$parent.resetMeshLinksTableRowSelection();
                 for (i in properties.edges) {
                     var fromto = properties.edges[i].split(":");
-                    scope.$parent.selectMeshTableRow(fromto[0], fromto[1]);
+                    scope.$parent.selectMeshLinksTableRow(fromto[0], fromto[1]);
                 }
                 scope.$parent.$digest();
             }
         }
     };
     
-    function interpretLatLonJS(latlonjs, nodes, edges) {
+    function interpretLatLonJS(latlonjs, nodes, edges, namedict, hnadict) {
         function Self(ip, lat, lon, hna, route, name) {
             nodes.push({id: ip, label: name, title: name+'<br>'+ip, group: 'self'});
+            namedict[ip] = name;
+            if (ip in hnadict) {
+                var toip = hnadict[ip][0];
+                var name = toip+'/'+hnadict[ip][1];
+                nodes.push({id: hnadict[ip][0], label: name, title: name, group: 'hna'});
+                edges.push({id: ip+':'+toip, from: ip, to: toip, label: 'HNA', title: 'HNA'});
+            }
         }
         function Node(ip, lat, lon, hna, route, name) {
             nodes.push({id: ip, label: name, title: name+'<br>'+ip});
+            namedict[ip] = name;
+            if (ip in hnadict) {
+                var toip = hnadict[ip][0];
+                var name = toip+'/'+hnadict[ip][1];
+                nodes.push({id: hnadict[ip][0], label: name, title: name, group: 'hna'});
+                edges.push({id: ip+':'+toip, from: ip, to: toip, label: 'HNA', title: 'HNA'});
+            }
         }
         function Link(fromip, toip, lq, nlq, etx) {
             edges.push({id: fromip+':'+toip, from: fromip, to: toip, label: lq, title: lq+':'+nlq+':'+etx});
@@ -117,7 +162,7 @@ hamboxApp.directive('openlayersMap', function() {
             map.zoomToMaxExtent();
             
             attributes.$observe('olsrlatlon', function(latlonjs) {
-                interpretLatLonJS(latlonjs, map, vectorLayer, positionsmap, scope.$parent.meshtabledata);
+                interpretLatLonJS(latlonjs, map, vectorLayer, positionsmap, scope.$parent.meshtabledata, scope.$parent.routesdict);
             }); 
             
             attributes.$observe('centerip', function() {

@@ -4,8 +4,14 @@ var routes = require('./serverjs/routes.js');
 var dbroutes = require('./serverjs/dbroutes.js');
 var websockethandler = require('./serverjs/websockethandler.js');
 var http = require('http');
+var auth = require('http-auth');
 var path = require('path');
 var favicon = require('serve-favicon');
+
+var authcon = auth.digest({
+    realm: "Config area",
+    file: __dirname + "/serverdata/htpasswd"
+});
 
 var app = express();
 var server = http.createServer(app);
@@ -32,7 +38,7 @@ app.use(function(err, req, res, next) {
 });
 
 // Main App Page
-app.get('/', routes.index);
+app.get('/', auth.connect(authcon), routes.index);
 
 // MongoDB API Routes
 app.get('/wirelessconfigs', dbroutes.wirelessconfiglist);

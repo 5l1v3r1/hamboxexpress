@@ -7,6 +7,18 @@ var spawn = require('child_process').spawn;
 exports.websockethandler = function(socket) {
 
     //==============================================================================================
+    socket.on('hnaroutes', function(data) {
+        var cmd = spawn("serverscripts/go/bin/hnaroutes", []);
+        var outbuff = '';
+        cmd.stdout.on('data', function(data) {
+            outbuff += data;
+        });
+        cmd.stdout.on('end', function() {
+            socket.emit('hnaroutes', outbuff);
+        });
+    });
+    
+    //==============================================================================================
     socket.on('hostnames', function(data) {
         var cmd = spawn("serverscripts/go/bin/hostnames", []);
         var outbuff = '';

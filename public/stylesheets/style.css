@@ -46,9 +46,17 @@ body {
     height: 94px;
 }
 
-.meshStateGridStyle {
+.meshLinksGridStyle {
     border: 1px solid rgb(212,212,212);
-    width: 780px;
+    font-size: 12px;
+    width: 640px;
+    height: 150px;
+}
+
+.meshRoutesGridStyle {
+    border: 1px solid rgb(212,212,212);
+    font-size: 12px;
+    width: 520px;
     height: 150px;
 }
 

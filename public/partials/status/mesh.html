@@ -5,17 +5,16 @@
     </div>
 
     <div class="container-fluid">
-
+                
         <div class="row" style="width: 1280px">
             <div class="col-lg-6">
-                <div class="row"><strong>Topology</strong>&nbsp;</div>
+                <div class="row" style="height: 30px"><strong>Topology</strong>&nbsp;&nbsp;&nbsp;<button ng-click="refreshMeshTopology()"><span class="glyphicon glyphicon-refresh"></span> Refresh</button></div>
                 <div class="row" style="border: 1px solid #ccc; width: 600px; height: 400px; float: left">
                     <vis-network olsrlatlon="{{meshtopologylatlon}}"></vis-network>
                 </div>
-                <div class="row"><button ng-click="refreshMeshTopology()"><span class="glyphicon glyphicon-refresh"></span> Refresh</button></div>
             </div>
             <div class="col-lg-6">
-                <div class="row"><strong>Map</strong>&nbsp;</div>
+                <div class="row" style="height: 30px"><strong>Map</strong>&nbsp;</div>
                 <div class="row" style="border: 1px solid #ccc; width: 600px; height: 400px; float: left">
                     <openlayers-map width=600 height=400 olsrlatlon="{{meshtopologylatlon}}" centerip="{{centerIP}}"></openlayers-map>
                 </div>
@@ -25,8 +24,18 @@
         <div class="row">&nbsp;</div>
 
         <div class="row">
-            <strong>Links</strong></br>
-            <div class="meshStateGridStyle" ng-grid="meshStateGridOptions"></div>
+            <div class="col-lg-7">
+                <div class="row"><strong>Links</strong></div>
+                <div class="row" style="float: left">
+                    <div class="meshLinksGridStyle" ng-grid="meshLinksGridOptions"></div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="row"><strong>Routes</strong></div>
+                <div class="row" style="float: left">
+                    <div class="meshRoutesGridStyle" ng-grid="meshRoutesGridOptions"></div>
+                </div>
+            </div>
         </div>
 
     </div>
