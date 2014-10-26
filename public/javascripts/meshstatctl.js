@@ -17,7 +17,6 @@ function MeshStatusCtrl($scope, $rootScope, $interval, socket) {
     //==================================================================
     $scope.init = function() {
         socket.emit('hnaroutes');
-        socket.emit('getmeshtopology:latlon', {});
     }
 
     //==================================================================
@@ -30,6 +29,7 @@ function MeshStatusCtrl($scope, $rootScope, $interval, socket) {
         var data = JSON.parse(jsondata);
         $scope.hnadict = data["hna"];
         $scope.routesdict = data["routes"];
+        socket.emit('getmeshtopology:latlon', {}); // ensure proper chaining: hnaroutes then latlon
     });
     
     //==================================================================
@@ -40,7 +40,6 @@ function MeshStatusCtrl($scope, $rootScope, $interval, socket) {
     //==================================================================
     $scope.refreshMeshTopology = function() {
         socket.emit('hnaroutes');
-        socket.emit('getmeshtopology:latlon', {});
     }
 
     //==================================================================
