@@ -1,6 +1,11 @@
 // Package simu provides a simulation of interface to shell commands
 package simu
 
+import (
+    "math/rand"
+    "time"
+    "fmt"
+)
 
 //==================================================================================================
 // GetMeshGraph returns the current mesh topology as a graph in dot format
@@ -29,14 +34,21 @@ func GetMeshGraph() string {
 //==================================================================================================
 func GetMeshGraphLatLon() string {
     
-    return `Self('10.217.97.197',43.581497,7.107303,0,'0.0.0.0','F5SFU-54GL-11A-F4EXB');
+    r := rand.New(rand.NewSource(time.Now().UnixNano()))
+    l1 := r.Float32()
+    l2 := r.Float32()
+    
+    var output string 
+    output = `Self('10.217.97.197',43.581497,7.107303,0,'0.0.0.0','F5SFU-54GL-11A-F4EXB');
 Node('10.110.116.160',43.739723,7.151774,0,'0.0.0.0','F5SFU-54G-11-home');
-Node('10.5.115.135',43.749325,7.149012,0,'0.0.0.0','F5ZIG-StePetr');
-PLink('10.110.116.160','10.5.115.135',1.000,1.000,1.000,43.749325,7.149012,0,43.739723,7.151774,0);
-PLink('10.217.97.197','10.5.115.135',1.000,1.000,1.000,43.749325,7.149012,0,43.581497,7.107303,0);
-PLink('10.5.115.135','10.110.116.160',1.000,1.000,1.000,43.739723,7.151774,0,43.749325,7.149012,0);
-PLink('10.5.115.135','10.217.97.197',1.000,1.000,1.000,43.581497,7.107303,0,43.749325,7.149012,0);
-`
+Node('10.5.115.135',43.749325,7.149012,0,'0.0.0.0','F5ZIG-StePetr');`
+
+    output += fmt.Sprintf("PLink('10.110.116.160','10.5.115.135',%.3f,1.000,%.3f,43.749325,7.149012,0,43.739723,7.151774,0);\n", l1, 1/l1);
+    output += fmt.Sprintf("PLink('10.217.97.197','10.5.115.135',%.3f,1.000,%.3f,43.749325,7.149012,0,43.581497,7.107303,0);\n", l2, 1/l2);
+    output += fmt.Sprintf("PLink('10.5.115.135','10.110.116.160',%.3f,1.000,%.3f,43.739723,7.151774,0,43.749325,7.149012,0);\n", l1, 1/l1);
+    output += fmt.Sprintf("PLink('10.5.115.135','10.217.97.197',%.3f,1.000,%.3f,43.581497,7.107303,0,43.749325,7.149012,0);\n", l2, 1/l2);
+
+    return output
 }
 
 //==================================================================================================
@@ -87,10 +99,14 @@ func GetOlsrRoutes() map[string]interface{} {
     destdict := make(map[string]interface{})
     var destlist [5]interface{}
     
+    r := rand.New(rand.NewSource(time.Now().UnixNano()))
+    l1 := r.Float32()
+    l2 := r.Float32()
+    
     destlist[0] = 32
     destlist[1] = "10.5.115.135"
     destlist[2] = 1
-    destlist[3] = float32(1.0)
+    destlist[3] = 1/l1
     destlist[4] = "wlan0"
     destdict["10.5.115.135"] = destlist
     
@@ -99,7 +115,7 @@ func GetOlsrRoutes() map[string]interface{} {
     
     destlist[0] = 32
     destlist[2] = 2
-    destlist[3] = float32(2.0)
+    destlist[3] = (1/l1)+(1/l2)
     destdict["10.110.116.160"] = destlist
     
     destlist[0] = 8
