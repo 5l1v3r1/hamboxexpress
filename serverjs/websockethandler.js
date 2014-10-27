@@ -9,8 +9,12 @@ exports.websockethandler = function(socket) {
 
     //==============================================================================================
     socket.on('updateiface', function(data) {
+        var ifacepath = "/etc/network";
+        if (process.env.HAMBOXSIMU) {
+            ifacepath = "serverscripts/go/simuroot" + ifacepath;
+        }
         var cmd = spawn("sudo", ["serverscripts/ibssiface.sh", 
-            "/etc/network", 
+            ifacepath,
             data.iface, 
             data.essid, 
             data.freq, 

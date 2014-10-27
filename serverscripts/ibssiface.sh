@@ -1,3 +1,5 @@
+#!/bin/sh
+
 IFACEPATH=${1}
 IFACE=${2}
 ESSID=${3}
@@ -8,10 +10,7 @@ IPADDR=${7}
 IPMASK=${8}
 TXPOWER=${9}
 
-if [ -z "${HAMBOXSIMU+x}" ];
-    then OUTFILE=${IFACEPATH}/interface.${IFACE};
-    else OUTFILE=serverscripts/go/simuroot/${IFACEPATH}/interface.${IFACE};
-fi
+OUTFILE=${IFACEPATH}/interface.${IFACE};
 
 echo "auto ${IFACE}
 iface ${IFACE} inet manual
