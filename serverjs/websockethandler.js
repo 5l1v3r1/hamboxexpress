@@ -1,10 +1,90 @@
 var mdb = require('./mdb.js');
 var WirelessConfig = mdb.WirelessConfig;
+var WirelessState = mdb.WirelessState;
 var spawn = require('child_process').spawn;
 //var exec = require('child_process').exec;
 
 
 exports.websockethandler = function(socket) {
+
+    //==============================================================================================
+    socket.on('updateiface', function(data) {
+        var cmd = spawn("sudo", ["serverscripts/ibssiface.sh", 
+            "/etc/network", 
+            data.iface, 
+            data.essid, 
+            data.freq, 
+            data.bw, 
+            data.bssid, 
+            data.iploc, 
+            data.iplocmask, 
+            data.txpower
+        ]);
+        var outbuff = '';
+        cmd.stdout.on('data', function(data) {
+            outbuff += data;
+        });
+        cmd.stdout.on('end', function() {
+            console.log(outbuff);
+            socket.emit('updateiface', 'done');
+        });
+    });
+
+    //==============================================================================================
+    socket.on('recycleiface', function(rowdata) {
+        if (process.env.HAMBOXSIMU) {
+            console.log('recycleiface');
+            WirelessState.findOne({'iface': rowdata.iface}, function(err, data) {
+                if (err) {
+                    console.log(err);
+                } else if (data) {
+                    data.ipaddr = rowdata.ipaddr;
+                    data.ipmask = rowdata.ipmask;
+                    data.essid = rowdata.essid;
+                    data.bssid = rowdata.bssid;
+                    data.freq = rowdata.freq;
+                    data.bw = rowdata.bw;
+                    data.txpower = rowdata.mbm;
+                    data.save(function(err){
+                        if (err) {
+                            console.log('update state error: ' + err.message);
+                        } else {
+                            console.log(data.iface + ' state updated');
+                        }
+                    });
+                } else {
+                    wirelessStateObject = {
+                        iface: rowdata.iface,
+                        ipaddr: rowdata.ipaddr,
+                        ipmask: rowdata.ipmask,
+                        essid: rowdata.essid,
+                        bssid: rowdata.bssid,
+                        freq: rowdata.freq,
+                        bw: rowdata.bw,
+                        txpower: rowdata.mbm
+                    };
+                    var wirelessState = new WirelessState(wirelessStateObject);
+                    wirelessState.save(function(err, new_data) {
+                        if (err) {
+                            console.log('create state error: ' + err.message);
+                        } else {
+                            console.log(new_data.iface + " state created");
+                        }
+                    });
+                }
+            });
+        } else {
+            var cmd = spawn("serverscripts/go/bin/recycleiface", ["-interface", rowdata.iface]);
+            var outbuff = '';
+            cmd.stdout.on('data', function(data) {
+                outbuff += data;
+            });
+            cmd.stdout.on('end', function() {
+                console.log(outbuff);
+                socket.emit('recycleiface', 'done');
+            });
+        }
+    });
 
     //==============================================================================================
     socket.on('hnaroutes', function(data) {

@@ -32,10 +32,10 @@ The server resides on the Hambox and is based on node.js and MongoDB to keep the
       1. `cd serverscripts/go`
       2. `export GOPATH=$(pwd)`
       3. `export GOBIN=$GOPATH/bin`
-      4. `go install src/main/netstatus.go`
-      5. `go install src/main/lanconfig.go`
+      4. `go install src/main/...` (do this for every .go file there)
 - node.js (including npm). See [node.js](http://nodejs.org/) 
 - bower: install with `sudo npm install -g bower`
+- htdigest: install with `sudo npm install -g htdigest`
 - Mongo-DB: normally you will find it in your Linux distribution. 
   - For other platforms see [MongoDB](http://www.mongodb.org/)
   - For Raspberry-Pi this is a bit of a problem since it is not present in Raspbian distribution so you have either to
@@ -51,9 +51,14 @@ Any modern browser (HTML5, javascript)
 1. Clone this repository
 2. cd into the repository: `cd hamboxexpress`
 3. Start mongoDB if not done already. It should be something like `sudo service mongodb start`
-4. `npm install`
-5. `npm start`
-6. connect with your browser to the Hambox ethernet address on port 8000
+4. Create a password file in a `serverdata` directory:
+  - `mkdir serverdata`
+  - `htdigest -c serverdata/htpasswd "Config area" sysop`
+  - Enter password for user `sysop` (or whatever user you decide to create)
+  - You will need this login to start the client application
+5. `npm install`
+6. `npm start`
+7. connect with your browser to the Hambox ethernet address on port 8000
 
 ## Limitations
 

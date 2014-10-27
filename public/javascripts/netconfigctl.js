@@ -18,6 +18,16 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
     }
 
     //==================================================================
+    socket.on('recycleiface', function(data) {
+        $scope.refreshIfaceState();
+    });
+    
+    //==================================================================
+    socket.on('updateiface', function(data) {
+        $scope.refreshCurrentWireless();
+    });
+    
+    //==================================================================
     socket.on('iwdevphyinfo', function(jsondata) {
 
         var data = JSON.parse(jsondata);
@@ -222,7 +232,7 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
 
     //==================================================================
     $scope.runCurrentWirelessConfig = function(data) {
-        alert("TODO");
+        socket.emit('recycleiface', data);
     }
     
     //==================================================================
@@ -303,7 +313,7 @@ function NetConfigsCtrl($scope, WirelessConfig, InetState, CurrentConfig, socket
     
     //==================================================================
     $scope.useWirelessConfigItem = function(row) {
-        alert("TODO");
+        socket.emit('updateiface', row.entity);
     }
     
     //==================================================================
