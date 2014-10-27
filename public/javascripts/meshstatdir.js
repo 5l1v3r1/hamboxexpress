@@ -162,6 +162,7 @@ hamboxApp.directive('openlayersMap', function() {
             map.zoomToMaxExtent();
             
             attributes.$observe('olsrlatlon', function(latlonjs) {
+                scope.$parent.meshtabledata = [];
                 interpretLatLonJS(latlonjs, map, vectorLayer, positionsmap, scope.$parent.meshtabledata, scope.$parent.routesdict);
             }); 
             
