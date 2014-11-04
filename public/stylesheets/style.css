@@ -22,13 +22,19 @@ body {
     text-align: right;
 }
 
-.netStoredConfigGridStyle {
+.netStoredWirelessConfigGridStyle {
     border: 1px solid rgb(212,212,212);
     width: 1120px;
     height: 150px;
 }
 
-.netCurrentConfigGridStyle {
+.netStoredWiredConfigGridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 730px;
+    height: 150px;
+}
+
+.netCurrentWirelessConfigGridStyle {
     border: 1px solid rgb(212,212,212);
     width: 980px;
     height: 94px;
@@ -42,7 +48,13 @@ body {
 
 .netWiredIfaceGridStyle {
     border: 1px solid rgb(212,212,212);
-    width: 480px;
+    width: 540px;
+    height: 94px;
+}
+
+.netCurrentWiredConfigGridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 580px;
     height: 94px;
 }
 

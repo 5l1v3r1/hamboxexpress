@@ -23,7 +23,7 @@
     
     <div class="row">
         <strong>Current configuration</strong></br>
-        <div class="netCurrentConfigGridStyle" ng-grid="wirelessCurrentConfigGridOptions"></div>
+        <div class="netCurrentWirelessConfigGridStyle" ng-grid="wirelessCurrentConfigGridOptions"></div>
     </div>
     
     <div class="row">
@@ -34,7 +34,7 @@
 
     <div class="row">
         <strong>Stored configurations</strong></br>
-        <div class="netStoredConfigGridStyle" ng-grid="wirelessConfigGridOptions"></div>
+        <div class="netStoredWirelessConfigGridStyle" ng-grid="wirelessConfigGridOptions"></div>
     </div>
     
     <div class="row">
@@ -56,4 +56,29 @@
     <div class="row">
         <button ng-click="refreshIfaceState()"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
     </div>
+    
+    <div class="row">&nbsp;</div>
+    
+    <div class="row">
+        <strong>Current configuration</strong></br>
+        <div class="netCurrentWiredConfigGridStyle" ng-grid="wiredCurrentConfigGridOptions"></div>
+    </div>
+    
+    <div class="row">
+        <button ng-click="refreshCurrentWired()"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
+    </div>
+    
+    <div class="row">&nbsp;</div>
+
+    <div class="row">
+        <strong>Stored configurations</strong></br>
+        <div class="netStoredWiredConfigGridStyle" ng-grid="wiredConfigGridOptions"></div>
+    </div>
+    
+    <div class="row">
+        <button ng-click="addWiredConfigRow()"><span class="glyphicon glyphicon-plus"></span> New Config</button>
+        <button ng-click="refreshWiredConfig()"><span class="glyphicon glyphicon-refresh"></span> Refresh from DB</button>
+    </div>
+    
+    <div class="row">&nbsp;</div>
 </div>

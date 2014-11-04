@@ -42,6 +42,7 @@ app.get('/', auth.connect(authcon), routes.index);
 
 // MongoDB API Routes
 app.get('/wirelessconfigs', dbroutes.wirelessconfiglist);
+app.get('/wiredconfigs', dbroutes.wiredconfiglist);
 app.post('/websockethandler', websockethandler.websockethandler);
 
 io.sockets.on('connection', websockethandler.websockethandler);

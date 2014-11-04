@@ -1,6 +1,7 @@
 // Angular service module for connecting to JSON APIs
 var hamboxServices = angular.module('hamboxServices', ['ngResource']);
 
+//==================================================================================================
 hamboxServices.factory('InetState', function(socket) {
     return {
         query: function() {
@@ -9,6 +10,7 @@ hamboxServices.factory('InetState', function(socket) {
     }
 });
 
+//==================================================================================================
 hamboxServices.factory('CurrentConfig', function(socket) {
     return {
         wireless: function() {
@@ -20,6 +22,7 @@ hamboxServices.factory('CurrentConfig', function(socket) {
     };
 });
 
+//==================================================================================================
 hamboxServices.factory('WirelessConfig', function($resource) {
     return $resource('wirelessconfigs', {}, {
         // Use this method for getting a list of wireless configurations
@@ -27,6 +30,15 @@ hamboxServices.factory('WirelessConfig', function($resource) {
     })
 });
 
+//==================================================================================================
+hamboxServices.factory('WiredConfig', function($resource) {
+    return $resource('wiredconfigs', {}, {
+        // Use this method for getting a list of wired configurations
+        query: { method: 'GET', params: {}, isArray: true }
+    })
+});
+
+//==================================================================================================
 hamboxServices.factory('socket', function($rootScope) {
     var initialPage = window.location.pathname;
     var socketPath = '';
