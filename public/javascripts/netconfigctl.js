@@ -289,15 +289,17 @@ function NetConfigsCtrl($scope, WirelessConfig, WiredConfig, InetState, CurrentC
 
     //==================================================================
     $scope.runCurrentWirelessConfig = function(data) {
-        data.ifaceclass = "wireless";
-        socket.emit('recycleiface', data);
+        var datasent = jQuery.extend({},data);
+        datasent.ifaceclass = "wireless";
+        socket.emit('recycleiface', datasent);
     }
     
     //==================================================================
     $scope.runCurrentWiredConfig = function(data) {
-        data.ifaceclass = "wired";
-        data.mask = iputils.getPrefix(data.mask);
-        socket.emit('recycleiface', data);
+        var datasent = jQuery.extend({},data);
+        datasent.ifaceclass = "wired";
+        datasent.mask = iputils.getPrefix(datasent.mask);
+        socket.emit('recycleiface', datasent);
     }
     
     //==================================================================
