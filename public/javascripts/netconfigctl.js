@@ -57,6 +57,8 @@ function NetConfigsCtrl($scope, WirelessConfig, WiredConfig, InetState, CurrentC
         var data_ip = data["ip"];
         $scope.wirelessifaces = [];
         $scope.wiredifaces = [];
+        $scope.wirelessAllInterfacesList = [];
+        $scope.wiredAllInterfacesList = [];
         
         for (var iwkey in data_iw) {
             var ipdata = data_ip[iwkey];

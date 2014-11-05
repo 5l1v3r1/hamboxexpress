@@ -91,6 +91,7 @@ exports.websockethandler = function(socket) {
                                 console.log(data.iface + ' state updated');
                             }
                         });
+                        socket.emit('recycleiface', 'done');
                     } else {
                         wirelessStateObject = {
                             iface: rowdata.iface,
@@ -111,6 +112,7 @@ exports.websockethandler = function(socket) {
                                 console.log(new_data.iface + " state created");
                             }
                         });
+                        socket.emit('recycleiface', 'done');
                     }
                 });
             } else if (rowdata.ifaceclass == 'wired') {
@@ -128,6 +130,7 @@ exports.websockethandler = function(socket) {
                                 console.log(data.iface + ' state updated');
                             }
                         });
+                        socket.emit('recycleiface', 'done');
                     } else {
                         wiredStateObject = {
                             iface: rowdata.iface,
@@ -143,6 +146,7 @@ exports.websockethandler = function(socket) {
                                 console.log(new_data.iface + " state created");
                             }
                         });
+                        socket.emit('recycleiface', 'done');
                     }
                 });
             }
