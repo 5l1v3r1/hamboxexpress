@@ -63,6 +63,7 @@ Any modern browser (HTML5, javascript)
   - if asked for an angular version reply for a 1.2 version (1.3 is not supported)
 6. `npm start`
 7. connect with your browser to the Hambox ethernet address on port 8000
+  - Depending on the server machine and/or the network bandwidth the first load can take some time
 
 ## Limitations
 
