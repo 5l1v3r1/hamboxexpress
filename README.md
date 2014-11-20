@@ -56,7 +56,7 @@ Any modern browser (HTML5, javascript)
   - You will need this login to start the client application
 5. `npm install`
   - if asked for an angular version reply for a 1.2 version (1.3 is not supported)
-6 For now you have to build go scripts manually assuming `go` binary is in your PATH. From `hamboxexpress` cloned directory:
+6. For now you have to build go scripts manually assuming `go` binary is in your PATH. From `hamboxexpress` cloned directory:
     1. `cd serverscripts/go`
     2. `export GOPATH=$(pwd)`
     3. `export GOBIN=$GOPATH/bin`
@@ -64,6 +64,7 @@ Any modern browser (HTML5, javascript)
     5. Alternatively if you use bash shell from the root of the cloned repository:
       - `source serverscripts/go/setenv.bash`
       - `find serverscripts/go/src/main/ -name *.go -exec go install {} \;`
+    6. You may have to add `/sbin` to the path: `export PATH=/sbin:$PATH` in the shell that starts the server
 7. `npm start`
 8. connect with your browser to the Hambox ethernet address on port 8000
   - Depending on the server machine and/or the network bandwidth the first load can take some time
