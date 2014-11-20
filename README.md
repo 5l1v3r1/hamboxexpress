@@ -28,11 +28,6 @@ The server resides on the Hambox and is based on node.js and MongoDB to keep the
   - See [A tour of Go](https://tour.golang.org/#1) for a good tutoral.
   - See [Download instructions](https://golang.org/doc/install) for download and install. Major distributions have binary packages (Debian: golang-go). 
   - For Raspberry Pi you have to build from source following [these intstructions](http://dave.cheney.net/2012/09/25/installing-go-on-the-raspberry-pi)
-  - For now you have to build scripts manually assuming `go` binary is in your PATH. From `hamboxexpress` cloned directory:
-      1. `cd serverscripts/go`
-      2. `export GOPATH=$(pwd)`
-      3. `export GOBIN=$GOPATH/bin`
-      4. `go install src/main/...` (do this for every .go file there)
 - node.js (including npm). See [node.js](http://nodejs.org/) (Debian: nodejs npm)
   - In Debian node binary is installed as /usr/bin/nodejs. You need to create a symbolic link to node:
       1. `cd /usr/bin`
@@ -61,8 +56,16 @@ Any modern browser (HTML5, javascript)
   - You will need this login to start the client application
 5. `npm install`
   - if asked for an angular version reply for a 1.2 version (1.3 is not supported)
-6. `npm start`
-7. connect with your browser to the Hambox ethernet address on port 8000
+6 For now you have to build go scripts manually assuming `go` binary is in your PATH. From `hamboxexpress` cloned directory:
+    1. `cd serverscripts/go`
+    2. `export GOPATH=$(pwd)`
+    3. `export GOBIN=$GOPATH/bin`
+    4. `go install src/main/...` (do this for every .go file there)
+    5. Alternatively if you use bash shell from the root of the cloned repository:
+      - `source serverscripts/go/setenv.bash`
+      - `find serverscripts/go/src/main/ -name *.go -exec go install {} \;`
+7. `npm start`
+8. connect with your browser to the Hambox ethernet address on port 8000
   - Depending on the server machine and/or the network bandwidth the first load can take some time
 
 ## Limitations
