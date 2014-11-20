@@ -26,17 +26,17 @@ The server resides on the Hambox and is based on node.js and MongoDB to keep the
 
 - [Go language](https://golang.org). 
   - See [A tour of Go](https://tour.golang.org/#1) for a good tutoral.
-  - See [Download instructions](https://golang.org/doc/install) for download and install. Major distributions have binary packages. 
+  - See [Download instructions](https://golang.org/doc/install) for download and install. Major distributions have binary packages (Debian: golang-go). 
   - For Raspberry Pi you have to build from source following [these intstructions](http://dave.cheney.net/2012/09/25/installing-go-on-the-raspberry-pi)
-  - For now you have to build scripts manually assuming `go` binary is in your PATH. From `hamboxexpress` directory:
+  - For now you have to build scripts manually assuming `go` binary is in your PATH. From `hamboxexpress` cloned directory:
       1. `cd serverscripts/go`
       2. `export GOPATH=$(pwd)`
       3. `export GOBIN=$GOPATH/bin`
       4. `go install src/main/...` (do this for every .go file there)
-- node.js (including npm). See [node.js](http://nodejs.org/) 
+- node.js (including npm). See [node.js](http://nodejs.org/) (Debian: nodejs npm)
 - bower: install with `sudo npm install -g bower`
 - htdigest: install with `sudo npm install -g htdigest`
-- Mongo-DB: normally you will find it in your Linux distribution. 
+- Mongo-DB: normally you will find it in your Linux distribution (Debian: mongodb). 
   - For other platforms see [MongoDB](http://www.mongodb.org/)
   - For Raspberry-Pi this is a bit of a problem since it is not present in Raspbian distribution so you have either to
       - Compile it on the Raspberry-Pi: this takes nearly a day but there is no option to do cross-compilation. You can follow [these instructions](http://ni-c.github.io/heimcontrol.js/get-started.html)
