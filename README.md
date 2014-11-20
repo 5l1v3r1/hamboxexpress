@@ -34,6 +34,9 @@ The server resides on the Hambox and is based on node.js and MongoDB to keep the
       3. `export GOBIN=$GOPATH/bin`
       4. `go install src/main/...` (do this for every .go file there)
 - node.js (including npm). See [node.js](http://nodejs.org/) (Debian: nodejs npm)
+  - In Debian node binary is installed as /usr/bin/nodejs. You need to create a symbolic link to node:
+      1. `cd /usr/bin`
+      2. `sudo ln -s nodejs node`
 - bower: install with `sudo npm install -g bower`
 - htdigest: install with `sudo npm install -g htdigest`
 - Mongo-DB: normally you will find it in your Linux distribution (Debian: mongodb). 
