@@ -64,7 +64,7 @@ Any modern browser (HTML5, javascript)
     5. Alternatively if you use bash shell from the root of the cloned repository:
       - `source serverscripts/go/setenv.bash`
       - `find serverscripts/go/src/main/ -name *.go -exec go install {} \;`
-    6. You may have to add `/sbin` to the path: `export PATH=/sbin:$PATH` in the shell that starts the server
+    6. You may have to add `/sbin` to the path: `export PATH=/sbin:$PATH` in the shell that starts the server. Alternatively in Debian you can edit `/etc/profile` that sets `$PATH` for all users.
 7. `npm start`
 8. connect with your browser to the Hambox ethernet address on port 8000
   - Depending on the server machine and/or the network bandwidth the first load can take some time
