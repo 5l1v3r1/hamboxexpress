@@ -227,8 +227,8 @@ func IwDevStaDump(iface string) map[string][7]interface{} {
     //       tx packets:     5655          <= txpackets
     //       tx retries:     0             <= txretries
     //       tx failed:      0             <= txfailed
-    //       signal:         -41 dBm       <= signal
-    //       signal avg:     -40 dBm       <= signalavg
+    //       signal:         -41 [-41] dBm <= signal (value in brackets for newer kernels only ~3.18)
+    //       signal avg:     -40 [-40] dBm <= signalavg (value in brackets for newer kernels only ~3.18)
     //       tx bitrate:     6.0 MBit/s    <= bitratetx
     //       rx bitrate:     0.3 MBit/s    <= bitraterx
     //       authorized:     yes
@@ -248,8 +248,8 @@ func IwDevStaDump(iface string) map[string][7]interface{} {
     txpackets_re := regexp.MustCompile("\\s+tx packets:\\s+(\\S+)")
     txretries_re := regexp.MustCompile("\\s+tx retries:\\s+(\\S+)")
     txfailed_re  := regexp.MustCompile("\\s+tx failed:\\s+(\\S+)")
-    signal_re    := regexp.MustCompile("\\s+signal:\\s+(\\S+) dBm")
-    signalavg_re := regexp.MustCompile("\\s+signal avg:\\s+(\\S+) dBm")
+    signal_re    := regexp.MustCompile("\\s+signal:\\s+(\\S+)")
+    signalavg_re := regexp.MustCompile("\\s+signal avg:\\s+(\\S+)")
     bitratetx_re := regexp.MustCompile("\\s+tx bitrate:\\s+(\\S+) MBit/s")
     bitraterx_re := regexp.MustCompile("\\s+rx bitrate:\\s+(\\S+) MBit/s")
     
