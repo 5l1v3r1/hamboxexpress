@@ -6,7 +6,6 @@ var hamboxControllers = angular.module('hamboxNetStatusControllers', ['ui.bootst
 
 function NetStatusCtrl($scope, $rootScope, $interval, socket) {
 
-    $scope.wirelessInterfacesList = [];
     $scope.selectedWirelessInterface = "select";
     $scope.macAndIp = "00:00:00:00:00:00";
     $scope.wirelessInterfacesList = [];
