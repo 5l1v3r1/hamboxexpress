@@ -39,6 +39,11 @@ The server resides on the Hambox and is based on node.js and MongoDB to keep the
   - For Raspberry-Pi this is a bit of a problem since it is not present in Raspbian distribution so you have either to
       - Compile it on the Raspberry-Pi: this takes nearly a day but there is no option to do cross-compilation. You can follow [these instructions](http://ni-c.github.io/heimcontrol.js/get-started.html)
       - Find a binary archive: you may try [this](http://www.widriksson.com/install-mongodb-raspberrypi/) or [this](https://github.com/brice-morin/ArduPi/tree/master/mongodb-rpi)
+- network configuration: in `/etc/network` there should be one `interface.xxx` file per `xxx` netwok interface (ex: `eth0`) containing the interface configuration. The `interfaces` just includes them with `source` statements (ex: `source /etc/network/interface.eth0`). See `serverscripts/go/simuroot/etc/network` folder for an example.
+- olsrd: it should be available from most distributions including Raspbian. You need the plugins package also (Debian: olsrd olsrd-plugins). For more information and source code see [olsrd website](http://www.olsr.org/).
+  - You need a `/etc/olsrd/olsrd.conf`. See `serverscripts/go/simuroot/etc/olsrd/olsrd.conf` for an example.
+  - To activate olsrd automatically uncomment `START_OLSRD="YES"` in `/etc/default/olsrd`
+  - Reboot or launch olsrd: `sudo service olsrd start`
       
 ###On client side:
 
