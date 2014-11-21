@@ -55,7 +55,7 @@ Any modern browser (HTML5, javascript)
   - Enter password for user `sysop` (or whatever user you decide to create)
   - You will need this login to start the client application
 5. `npm install`
-  - if asked for an angular version reply for a 1.2 version (1.3 is not supported)
+  - if asked for an angular version please choose reply for a 1.2.27 version
 6. For now you have to build go scripts manually assuming `go` binary is in your PATH. From `hamboxexpress` cloned directory:
     1. `cd serverscripts/go`
     2. `export GOPATH=$(pwd)`
